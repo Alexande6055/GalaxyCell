@@ -1,0 +1,25 @@
+services:
+  # api:
+  #   build: ./back-end
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./back-end/uploads:/app/uploads
+  #   env_file:
+  #     - ./back-end/.env
+  #   depends_on:
+  #     - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nestdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
