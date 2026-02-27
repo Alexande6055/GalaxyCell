@@ -1,0 +1,20 @@
+services:
+  api:
+    build: ./back-end  # <--- Apunta a la subcarpeta donde está el Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./back-end/uploads:/app/uploads # <--- Mapea la carpeta correcta
+    env_file:
+      - ./back-end/.env # <--- Asegúrate de que el .env esté ahí
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nestdb
+    ports:
+      - "5432:5432"

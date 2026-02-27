@@ -14,9 +14,15 @@ importers:
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.14)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/mapped-types':
+        specifier: '*'
+        version: 2.1.0(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
       '@nestjs/platform-express':
-        specifier: ^11.0.1
+        specifier: ^11.1.14
         version: 11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)
+      multer:
+        specifier: ^2.0.2
+        version: 2.0.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -51,6 +57,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/multer':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node':
         specifier: ^22.10.7
         version: 22.19.13
@@ -756,6 +765,19 @@ packages:
       '@nestjs/websockets':
         optional: true
 
+  '@nestjs/mapped-types@2.1.0':
+    resolution: {integrity: sha512-W+n+rM69XsFdwORF11UqJahn4J3xi4g/ZEOlJNL6KoW5ygWSmBB2p0S2BZ4FQeS/NDH72e6xIcu35SfJnE8bXw==}
+    peerDependencies:
+      '@nestjs/common': ^10.0.0 || ^11.0.0
+      class-transformer: ^0.4.0 || ^0.5.0
+      class-validator: ^0.13.0 || ^0.14.0
+      reflect-metadata: ^0.1.12 || ^0.2.0
+    peerDependenciesMeta:
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+
   '@nestjs/platform-express@11.1.14':
     resolution: {integrity: sha512-Fs+/j+mBSBSXErOQJ/YdUn/HqJGSJ4pGfiJyYOyz04l42uNVnqEakvu1kXLbxMabR6vd6/h9d6Bi4tso9p7o4Q==}
     peerDependencies:
@@ -996,6 +1018,9 @@ packages:
 
   '@types/methods@1.1.4':
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
+
+  '@types/multer@2.0.0':
+    resolution: {integrity: sha512-C3Z9v9Evij2yST3RSBktxP9STm6OdMc5uR1xF1SGr98uv8dUlAL2hqwrZ3GVB3uyMyiegnscEK6PGtYvNrjTjw==}
 
   '@types/node@22.19.13':
     resolution: {integrity: sha512-akNQMv0wW5uyRpD2v2IEyRSZiR+BeGuoB6L310EgGObO44HSMNT8z1xzio28V8qOrgYaopIDNA18YgdXd+qTiw==}
@@ -4092,6 +4117,11 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)
 
+  '@nestjs/mapped-types@2.1.0(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)':
+    dependencies:
+      '@nestjs/common': 11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+
   '@nestjs/platform-express@11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)':
     dependencies:
       '@nestjs/common': 11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -4342,6 +4372,10 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/methods@1.1.4': {}
+
+  '@types/multer@2.0.0':
+    dependencies:
+      '@types/express': 5.0.6
 
   '@types/node@22.19.13':
     dependencies:
