@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.AsyncImage
 import com.gestionplus.galaxycell.ui.theme.GalaxyCellTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,6 +37,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
+    AsyncImage("https://www.recetasnestle.com.ec/sites/default/files/inline-images/tipos-de-manzana-royal-gala.jpg","Manzana")
 }
 
 @Preview(showBackground = true)
