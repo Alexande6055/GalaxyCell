@@ -1,6 +1,7 @@
 import { CategoryEntity } from "src/app/category/entities/category.entity";
-import { Column, CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+@Entity('product')
 export class ProductEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -18,12 +19,12 @@ export class ProductEntity {
     @JoinColumn({ name: 'category_id' })
     category: CategoryEntity;
 
-
     @CreateDateColumn()
-
     createdAt: Date;
 
     @UpdateDateColumn()
-
     updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 }
