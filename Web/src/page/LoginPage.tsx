@@ -1,19 +1,12 @@
-import { AlertCircle, Lock, RefreshCw, Shield, Smartphone, User } from "lucide-react";
+import { AlertCircle, Lock, RefreshCw, Shield, User as UserIcon } from "lucide-react";
 import { useState } from "react";
-import { FontStyle, USERS_DB } from "../utils/Data";
+import { FontStyle } from "../utils/Data";
 import logo from "../assets/logo.png";
+import { FirebaseApi } from "../services/firebase/metodos";
+import type { User } from "firebase/auth";
 
 interface LoginPageProps {
-    onLogin: (user: {
-        id: number;
-        username: string;
-        password: string;
-        role: string;
-        name: string;
-        email: string;
-        status: string;
-        avatar: string;
-    }) => void;
+    onLogin: (user: User) => void;
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
@@ -22,11 +15,17 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setError(""); setLoading(true);
-        setTimeout(() => {
-            const user = USERS_DB.find(u => u.username === username && u.password === password);
-            if (user) { if (user.status === "blocked") { setError("Cuenta bloqueada. Contacte al administrador."); setLoading(false); return; } onLogin(user); }
+        setTimeout(async () => {
+            const user = await FirebaseApi.login(username, password);
+            if (user) {
+                /*if (user.status === "blocked") {
+                    setError("Cuenta bloqueada. Contacte al administrador.");
+                    setLoading(false); return;
+                }
+                */onLogin(user);
+            }
             else { setError("Credenciales incorrectas. Intente nuevamente."); setLoading(false); }
         }, 800);
     };
@@ -57,7 +56,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         <div>
                             <label className="block text-blue-200 text-xs font-semibold mb-1.5 uppercase tracking-wider">Usuario</label>
                             <div className="relative">
-                                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300" />
+                                <UserIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300" />
                                 <input value={username} onChange={e => setUsername(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSubmit()}
                                     className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-300/60 text-sm transition-all"
                                     placeholder="Ingresa tu usuario" />

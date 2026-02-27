@@ -2,21 +2,11 @@ import { useState } from 'react'
 import LoginPage from './page/LoginPage'
 import { Bell, CheckCircle, History, LayoutDashboard, LogOut, Menu, Moon, Search, Smartphone, Sun, Wrench } from 'lucide-react';
 import { FontStyle, NOTIFICATIONS } from './utils/Data';
+import type { User } from 'firebase/auth';
 
 function App() {
 
-  const [user, setUser] = useState<{
-    user: {
-      id: number;
-      username: string;
-      password: string;
-      role: string;
-      name: string;
-      email: string;
-      status: string;
-      avatar: string;
-    }
-  } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [dark, setDark] = useState(false);
   const [page, setPage] = useState("dashboard");
   const [sideOpen, setSideOpen] = useState(false);
@@ -31,9 +21,9 @@ function App() {
     { id: "history", label: "Historial", icon: History },
     { id: "notifications", label: "Notificaciones", icon: Bell },
   ];
-  const nav = user?.user.role === "admin" ? adminNav : techNav;
+  const nav = user?.email === "galaxycell@gmail.com" ? adminNav : techNav;
 
-  if (!user) return <LoginPage onLogin={(u) => { setUser({ user: u }); setPage(u.role === "admin" ? "dashboard" : "services"); }} />;
+  if (!user) return <LoginPage onLogin={(u) => { setUser(u as User); setPage(u.email === "galaxycell@gmail.com" ? "dashboard" : "services"); }} />;
 
   const renderPage = () => {
     switch (page) {
@@ -65,8 +55,8 @@ function App() {
         </nav>
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm text-white btn-primary shrink-0">{user.user.avatar}</div>
-            <div><p className="text-white text-sm font-semibold leading-tight">{user.user.name}</p><p className="text-blue-300 text-xs capitalize">{user.user.role === "admin" ? "Administrador" : "Técnico"}</p></div>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm text-white btn-primary shrink-0">{user.photoURL}</div>
+            <div><p className="text-white text-sm font-semibold leading-tight">{user.email}</p><p className="text-blue-300 text-xs capitalize">{user.email === "galaxycell@gmail.com" ? "Administrador" : "Técnico"}</p></div>
           </div>
           <button onClick={() => setUser(null)} className="w-full flex items-center gap-2 text-blue-300 hover:text-white text-xs font-medium px-2 py-2 rounded-xl hover:bg-white/10 transition-all">
             <LogOut size={14} />Cerrar Sesión
