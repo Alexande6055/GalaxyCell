@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "445037003551",
+    "project_id": "galacycell",
+    "storage_bucket": "galacycell.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445037003551:android:2b6fb7a7be7176e46c262a",
+        "android_client_info": {
+          "package_name": "com.gestionplus.galaxycell"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445037003551-qj3usa723u8jc0rv783ahs2v2omfeneq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gestionplus.galaxycell",
+            "certificate_hash": "a88b7fca34ec735f803b324167e658c4efd32b56"
+          }
+        },
+        {
+          "client_id": "445037003551-7mvjbm48197abr0gslrt8ov0co6dqsgv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVGk6q1u-mkOfO1MtVzPSJfyZdY6E0u7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445037003551-7mvjbm48197abr0gslrt8ov0co6dqsgv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
