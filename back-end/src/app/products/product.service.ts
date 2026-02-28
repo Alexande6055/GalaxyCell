@@ -36,40 +36,47 @@ export class ProductService {
         }
     }
 
-    // async findAll() {
-    //     return await this.productRepository.find();
-    // }
+    async findAll() {
+        return await this.productRepository.find();
+    }
 
-    // async findOne(id: string) {
-    //     return await this.productRepository.findOne({ where: { id: id } });
-    // }
+    async findOne(id: string) {
+        return await this.productRepository.findOne({ where: { id: id } });
+    }
 
-    // async update(id: string, productDto: ProductDto) {
-    //     const product = await this.productRepository.preload({
-    //         id: id,
-    //         ...productDto
-    //     });
-    //     if (!product) {
-    //         throw new Error('Product no existe');
-    //     }
-    //     try {
-    //         return await this.productRepository.save(product);
-    //     } catch (error) {
-    //         if (error.code === '23505' || error.errno === 1062) {
-    //             throw new Error(`El nombre '${productDto.name}' ya está registrado en otra categoría`);
-    //         }
-    //         throw new Error('Error inesperado al actualizar el producto');
-    //     }
-    // }
+    async update(id: string, productDto: ProductDto) {
+        const product = await this.productRepository.preload({
+            id: id,
+            ...productDto,
+            // Convertimos los strings del DTO en objetos que TypeORM entienda
+            category: { id: productDto.category } as any,
+            brand: { id: productDto.brand } as any,
+        });
 
-    // async softDelete(id: string) {
-    //     const product = await this.productRepository.findOne({ where: { id: id } });
-    //     if (!product) {
-    //         throw new Error('Product no existe');
-    //     }
-    //     return await this.productRepository.softRemove(product);
+        if (!product) {
+            throw new Error('El producto no existe');
+        }
+
+        try {
+            return await this.productRepository.save(product);
+        } catch (error) {
+            // Manejo de errores de duplicados (Postgres: 23505, MySQL: 1062)
+            if (error.code === '23505' || error.errno === 1062) {
+                throw new Error(`El nombre '${productDto.name}' ya está registrado`);
+            }
+            console.error(error); // Es buena práctica loguear el error real
+            throw new Error('Error inesperado al actualizar el producto');
+        }
+    }
+
+    async softDelete(id: string) {
+        const product = await this.productRepository.findOne({ where: { id: id } });
+        if (!product) {
+            throw new Error('Product no existe');
+        }
+        return await this.productRepository.softRemove(product);
 
 
-    // }
+    }
 
 }
