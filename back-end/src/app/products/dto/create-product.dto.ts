@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { Alphanumeric } from "src/decorators/alphanumeric.decorator";
 import { StrictFloat } from "src/decorators/strictFloat.decorator";
-import { CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 export class ProductDto {
     @Alphanumeric()
@@ -17,7 +16,7 @@ export class ProductDto {
     @StrictFloat()
     @IsNumber()
     @IsNotEmpty()
-    price: string;
+    price: number;
 
     @StrictFloat()
     @IsNumber()
@@ -25,13 +24,11 @@ export class ProductDto {
     quantity: number;
 
     @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({message: 'La categoría es requerida'})
     category: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
+    @IsString()
+    @IsNotEmpty({message: 'La marca es requerida'})
+    brand: string;
 
 }

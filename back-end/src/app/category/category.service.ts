@@ -1,9 +1,9 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { CategoryEntity } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryDto } from '../dto/category.dto';
-import { UpdateCategoryDto } from '../dto/updatecategory.dto';
+import { CategoryEntity } from './entities/category.entity';
+import { CategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 
 @Injectable()
@@ -25,7 +25,7 @@ export class CategoryService {
         return await this.categoryRepository.save(category);
     }
 
-    async update(id: string, categoryDto: UpdateCategoryDto): Promise<CategoryEntity> {
+    async update(id: string, categoryDto: UpdateCategoryDto){
         const category = await this.categoryRepository.preload({
             id: id,
             ...categoryDto
@@ -47,11 +47,11 @@ export class CategoryService {
         }
     }
 
-    async getAll() {
+    async findAll() {
         return await this.categoryRepository.find();
     }
 
-    async getById(id: string) {
+    async findOne(id: string) {
         return await this.categoryRepository.findOneBy({ id });
     }
 

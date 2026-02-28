@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { envValidationSchema } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoryModule } from './app/category/category/category.module';
-import { ProductModule } from './app/products/product/product.module';
+import { CategoryModule } from './app/category/category.module';
+import { ProductModule } from './app/products/product.module';
+import { BrandModule } from './app/brand/brand.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { ProductModule } from './app/products/product/product.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    CategoryModule, ProductModule
+    CategoryModule, ProductModule, BrandModule
   ],
 })
 export class AppModule { }

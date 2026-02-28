@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CategoryDto } from '../dto/category.dto';
-import { UpdateCategoryDto } from '../dto/updatecategory.dto';
+import { CategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -23,12 +23,12 @@ export class CategoryController {
 
   @Get('/:id')
   async getById(@Param('id', new ParseUUIDPipe()) id: string) {
-    return await this.categoryService.getById(id);
+    return await this.categoryService.findOne(id);
   }
 
   @Get()
   async getAll() {
-    return await this.categoryService.getAll();
+    return await this.categoryService.findAll();
   }
 
 
