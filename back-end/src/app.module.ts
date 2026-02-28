@@ -5,6 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryModule } from './app/category/category.module';
 import { ProductModule } from './app/products/product.module';
 import { BrandModule } from './app/brand/brand.module';
+import { APP_GUARD } from '@nestjs/core';
+import { FirebaseGuard } from './guard/firebase.guard';
+import { RolesGuard } from './guard/roles.guard';
+import { FirebaseModule } from './firebase/firebase.module';
+import { AuthModule } from 'auth/auth/auth.module';
 
 @Module({
   imports: [
@@ -26,8 +31,16 @@ import { BrandModule } from './app/brand/brand.module';
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      logging: true
     }),
-    CategoryModule, ProductModule, BrandModule
+    CategoryModule, ProductModule, BrandModule,FirebaseModule,AuthModule
   ],
+  providers: [{
+    provide: APP_GUARD,
+    useClass: FirebaseGuard
+  }, {
+    provide: APP_GUARD,
+    useClass: RolesGuard
+  }],
 })
 export class AppModule { }
