@@ -1,64 +1,75 @@
 import { useState } from 'react'
 import LoginPage from './page/LoginPage'
-import { Bell, CheckCircle, History, LayoutDashboard, LogOut, Menu, Moon, Search, Smartphone, Sun, Wrench } from 'lucide-react';
-import { FontStyle, NOTIFICATIONS } from './utils/Data';
-import type { User } from 'firebase/auth';
+import { Bell, ChevronDown, History, LayoutDashboard, LogOut, Menu, Search, Smartphone, Wrench } from 'lucide-react'
+import { FontStyle, NOTIFICATIONS } from './utils/Data'
+import DashboardView from './components/admin/Dashboard'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 
-function App() {
+function AppInner() {
+  const { user, logout } = useAuth()
+  const [page, setPage] = useState('dashboard')
+  const [sideOpen, setSideOpen] = useState(false)
+  const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length
+  const [searchQuery, setSearchQuery] = useState('')
+  const [profileOpen, setProfileOpen] = useState(false) // Estado para el dropdown manual
 
-  const [user, setUser] = useState<User | null>(null);
-  const [dark, setDark] = useState(false);
-  const [page, setPage] = useState("dashboard");
-  const [sideOpen, setSideOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const unreadCount = NOTIFICATIONS.filter(n => !n.read).length;
-
-  const adminNav = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  ];
+  const adminNav = [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }]
   const techNav = [
-    { id: "services", label: "Mis Órdenes", icon: Wrench },
-    { id: "history", label: "Historial", icon: History },
-    { id: "notifications", label: "Notificaciones", icon: Bell },
-  ];
-  const nav = user?.email === "galaxycell@gmail.com" ? adminNav : techNav;
+    { id: 'services', label: 'Mis Órdenes', icon: Wrench },
+    { id: 'history', label: 'Historial', icon: History },
+    { id: 'notifications', label: 'Notificaciones', icon: Bell },
+  ]
+  const nav = user?.email === 'galaxycell@gmail.com' ? adminNav : techNav
 
-  if (!user) return <LoginPage onLogin={(u) => { setUser(u as User); setPage(u.email === "galaxycell@gmail.com" ? "dashboard" : "services"); }} />;
+  if (!user) return <LoginPage onLogin={(u) => { setPage(u.email === 'galaxycell@gmail.com' ? 'dashboard' : 'services') }} />
+  const userD = { ...user, id: user.email === 'galaxycell@gmail.com' ? 'U001' : 'U002', nombre: user.email === 'galaxycell@gmail.com' ? 'Galaxy Cell' : 'Tecnico', rol: user.email === 'galaxycell@gmail.com' ? 'admin' : 'tecnico' }
 
   const renderPage = () => {
     switch (page) {
-      case "dashboard": return <div><p>Hola Admin</p></div>;
-      case "services": return <div><p>Hola Tecnico</p></div>;
-
-      default: return null;
+      case 'dashboard':
+        return <DashboardView user={user} />
+      case 'services':
+        return <div><p>Hola Tecnico</p></div>
+      default:
+        return null
     }
-  };
+  }
+
+  const getModuleTitle = () => {
+    const titles: Record<string, string> = {
+      dashboard: 'Panel de Control',
+      services: 'Órdenes de Servicio',
+      history: 'Historial de Reparaciones',
+      notifications: 'Centro de Notificaciones',
+    }
+    return titles[page] || 'Galaxy Cell'
+  }
+
+  const getInitials = (name: string) => name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
-    <div className={`min-h-screen flex ${dark ? "dark-bg text-white" : "text-gray-800"}`} style={{ background: dark ? "#121212" : "#F8F9FA" }}>
+    <div className={`min-h-screen flex text-gray-800`} style={{ background: '#F8F9FA' }}>
       <FontStyle />
       {/* SIDEBAR */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col transition-transform duration-300 ${sideOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
-        style={{ background: "#1A237E", boxShadow: "4px 0 20px rgba(0,0,0,0.15)" }}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col transition-transform duration-300 ${sideOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`} style={{ background: '#1A237E', boxShadow: '4px 0 20px rgba(0,0,0,0.15)' }}>
         <div className="p-5 flex items-center gap-3 border-b border-white/10">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center btn-primary shrink-0"><Smartphone size={18} color="white" /></div>
           <div><p className="font-display font-bold text-white text-lg leading-tight">Galaxy Cell</p><p className="text-blue-300 text-xs">Panel Administrativo</p></div>
         </div>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {nav.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => { setPage(id); setSideOpen(false); }}
-              className={`sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all ${page === id ? "active text-cyan-300" : "text-blue-200 hover:text-white"}`}>
+            <button key={id} onClick={() => { setPage(id); setSideOpen(false) }} className={`sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all ${page === id ? 'active text-cyan-300' : 'text-blue-200 hover:text-white'}`}>
               <Icon size={17} />{label}
-              {id === "notifications" && unreadCount > 0 && <span className="ml-auto bg-blue-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">{unreadCount}</span>}
+              {id === 'notifications' && unreadCount > 0 && <span className="ml-auto bg-blue-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">{unreadCount}</span>}
             </button>
           ))}
         </nav>
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm text-white btn-primary shrink-0">{user.photoURL}</div>
-            <div><p className="text-white text-sm font-semibold leading-tight">{user.email}</p><p className="text-blue-300 text-xs capitalize">{user.email === "galaxycell@gmail.com" ? "Administrador" : "Técnico"}</p></div>
+            <div><p className="text-white text-sm font-semibold leading-tight">{user.email}</p><p className="text-blue-300 text-xs capitalize">{user.email === 'galaxycell@gmail.com' ? 'Administrador' : 'Técnico'}</p></div>
           </div>
-          <button onClick={() => setUser(null)} className="w-full flex items-center gap-2 text-blue-300 hover:text-white text-xs font-medium px-2 py-2 rounded-xl hover:bg-white/10 transition-all">
+          <button onClick={() => { logout() }} className="w-full flex items-center gap-2 text-blue-300 hover:text-white text-xs font-medium px-2 py-2 rounded-xl hover:bg-white/10 transition-all">
             <LogOut size={14} />Cerrar Sesión
           </button>
         </div>
@@ -67,45 +78,66 @@ function App() {
       {/* MAIN */}
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
         {/* TOPBAR */}
-        <header className={`sticky top-0 z-20 px-4 py-3 flex items-center gap-3 border-b ${dark ? "dark-surface border-gray-800" : "bg-white border-gray-100"}`} style={{ backdropFilter: "blur(8px)" }}>
-          <button onClick={() => setSideOpen(true)} className={`lg:hidden p-2 rounded-xl ${dark ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}><Menu size={18} /></button>
-          <div className={`relative flex-1 max-w-xs hidden sm:block`}>
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input placeholder="Buscar IMEI, cliente, orden..." className={`w-full pl-9 pr-4 py-2 rounded-xl border text-sm ${dark ? "dark-surface2 border-gray-700 text-white placeholder-gray-500" : "bg-gray-50 border-gray-200"}`} />
-          </div>
-          <div className="flex items-center gap-2 ml-auto">
-            <button onClick={() => setDark(!dark)} className={`p-2 rounded-xl transition-colors ${dark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`}>
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-white px-4 md:px-8 shadow-sm">
+
+          <div className="flex items-center gap-4 flex-1">
+            {/* Botón menú móvil */}
+            <button onClick={() => setSideOpen(true)} className="p-2 hover:bg-slate-100 rounded-lg lg:hidden text-slate-600">
+              <Menu size={20} />
             </button>
+
+            <h1 className="hidden sm:block font-bold text-slate-800 text-lg whitespace-nowrap">{getModuleTitle()}</h1>
+
+            {/* Buscador con HTML puro */}
+            <div className="relative max-w-md w-full ml-4 hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-4" />
+              <input type="text" placeholder="Buscar por IMEI, modelo o cliente..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full h-10 pl-10 pr-4 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Dropdown de Usuario Manual */}
             <div className="relative">
-              <button onClick={() => setNotifOpen(!notifOpen)} className={`p-2 rounded-xl transition-colors relative ${dark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`}>
-                <Bell size={18} />
-                {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 rounded-full pulse-dot" style={{ background: "#007BFF" }} />}
-              </button>
-              {notifOpen && (
-                <div className={`absolute right-0 top-12 w-80 rounded-2xl shadow-2xl z-50 overflow-hidden ${dark ? "dark-surface border border-gray-700" : "bg-white border border-gray-100"}`}>
-                  <div className={`p-4 border-b font-display font-semibold text-sm flex items-center justify-between ${dark ? "border-gray-700" : "border-gray-100"}`}>
-                    <span>Notificaciones</span><span className="text-xs font-normal" style={{ color: "#007BFF" }}>{unreadCount} nuevas</span>
-                  </div>
-                  {NOTIFICATIONS.slice(0, 3).map(n => (
-                    <div key={n.id} className={`p-3 border-b text-sm flex items-start gap-2.5 ${dark ? "border-gray-700/50 hover:bg-gray-700/30" : "border-gray-50 hover:bg-gray-50"} ${!n.read ? "bg-blue-50/20" : ""}`}>
-                      {n.type === "ready" ? <CheckCircle size={15} className="text-emerald-500 mt-0.5 shrink-0" /> : <Bell size={15} className="text-blue-500 mt-0.5 shrink-0" />}
-                      <div><p className={`leading-tight ${dark ? "text-gray-300" : "text-gray-700"}`}>{n.message}</p><p className={`text-xs mt-0.5 ${dark ? "text-gray-500" : "text-gray-400"}`}>{n.time}</p></div>
-                    </div>
-                  ))}
-                  <button onClick={() => { setNotifOpen(false); setPage("notifications"); }} className="w-full p-3 text-xs font-semibold text-center" style={{ color: "#007BFF" }}>Ver todas</button>
+              <button onClick={() => setProfileOpen(!profileOpen)} className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${profileOpen ? 'bg-slate-100' : 'hover:bg-slate-50'}`}>
+                {/* Avatar manual */}
+                <div className="size-8 rounded-lg bg-[#1A237E] flex items-center justify-center text-white text-xs font-bold shrink-0">{getInitials(userD.nombre)}</div>
+
+                <div className="hidden md:block text-left mr-1">
+                  <p className="text-xs font-bold text-slate-900 leading-none mb-0.5">{userD.nombre}</p>
+                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-tight">{userD.rol}</p>
                 </div>
+                <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Menú desplegable HTML */}
+              {profileOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setProfileOpen(false)}></div>
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden py-1 animate-in fade-in zoom-in duration-150">
+                    <div className="px-4 py-3 border-b border-slate-50">
+                      <p className="text-sm font-bold text-slate-900">{userD.nombre}</p>
+                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                    </div>
+                    <button onClick={() => { logout() }} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                      <LogOut size={16} />
+                      Cerrar Sesión
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6">{renderPage()}</main>
+        <main className="flex-1 p-4 sm:p-2">{renderPage()}</main>
       </div>
     </div>
-  );
-
-
-
+  )
 }
 
-export default App
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
+    </AuthProvider>
+  )
+}

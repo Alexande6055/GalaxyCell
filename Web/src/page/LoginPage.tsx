@@ -1,34 +1,37 @@
-import { AlertCircle, Lock, RefreshCw, Shield, User as UserIcon } from "lucide-react";
-import { useState } from "react";
-import { FontStyle } from "../utils/Data";
-import logo from "../assets/logo.png";
-import { FirebaseApi } from "../services/firebase/metodos";
-import type { User } from "firebase/auth";
+import { AlertCircle, Lock, RefreshCw, Shield, User as UserIcon } from 'lucide-react'
+import { useState } from 'react'
+import { FontStyle } from '../utils/Data'
+import logo from '../assets/logo.png'
+import type { User } from 'firebase/auth'
+import { useAuth } from '../contexts/AuthContext'
 
 interface LoginPageProps {
-    onLogin: (user: User) => void;
+    onLogin?: (user: User) => void
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+    const { login } = useAuth()
 
     const handleSubmit = async () => {
-        setError(""); setLoading(true);
-        setTimeout(async () => {
-            const user = await FirebaseApi.login(username, password);
+        setError('')
+        setLoading(true)
+        try {
+            const user = await login(username, password)
             if (user) {
-                /*if (user.status === "blocked") {
-                    setError("Cuenta bloqueada. Contacte al administrador.");
-                    setLoading(false); return;
-                }
-                */onLogin(user);
+                onLogin?.(user)
+            } else {
+                setError('Credenciales incorrectas. Intente nuevamente.')
             }
-            else { setError("Credenciales incorrectas. Intente nuevamente."); setLoading(false); }
-        }, 800);
-    };
+        } catch (e) {
+            setError('Error en el inicio de sesión. Intente más tarde.')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0D1B4F 0%, #1A237E 40%, #0D3B7A 100%)" }}>
@@ -71,10 +74,15 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                                     placeholder="••••••••" />
                             </div>
                         </div>
-                        {error && <div className="flex items-center gap-2 bg-red-500/20 border border-red-400/30 rounded-xl px-3 py-2.5"><AlertCircle size={14} className="text-red-400" /><p className="text-red-300 text-xs">{error}</p></div>}
-                        <button onClick={handleSubmit} disabled={loading}
-                            className="w-full py-3 rounded-xl text-white font-semibold btn-primary transition-all text-sm mt-2 disabled:opacity-60">
-                            {loading ? <RefreshCw size={16} className="inline animate-spin mr-2" /> : null}{loading ? "Verificando..." : "Iniciar Sesión"}
+                        {error && (
+                            <div className="flex items-center gap-2 bg-red-500/20 border border-red-400/30 rounded-xl px-3 py-2.5">
+                                <AlertCircle size={14} className="text-red-400" />
+                                <p className="text-red-300 text-xs">{error}</p>
+                            </div>
+                        )}
+                        <button onClick={handleSubmit} disabled={loading} className="w-full py-3 rounded-xl text-white font-semibold btn-primary transition-all text-sm mt-2 disabled:opacity-60">
+                            {loading ? <RefreshCw size={16} className="inline animate-spin mr-2" /> : null}
+                            {loading ? 'Verificando...' : 'Iniciar Sesión'}
                         </button>
                     </div>
                     <div className="mt-6 pt-5 border-t border-white/10">
