@@ -1,12 +1,12 @@
 import { AlertCircle, Lock, RefreshCw, Shield, User as UserIcon } from 'lucide-react'
-import { useState } from 'react'
+import {  useState } from 'react'
 import { FontStyle } from '../utils/Data'
 import logo from '../assets/logo.png'
-import type { User } from 'firebase/auth'
 import { useAuth } from '../contexts/AuthContext'
+import type { UserBack } from '../utils/DataTypeBackEnd'
 
 interface LoginPageProps {
-    onLogin?: (user: User) => void
+    onLogin?: (user: UserBack) => void
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
@@ -20,9 +20,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         setError('')
         setLoading(true)
         try {
-            const user = await login(username, password)
-            if (user) {
-                onLogin?.(user)
+            const userBack = await login(username, password)
+            if (userBack) {
+                onLogin?.(userBack)
             } else {
                 setError('Credenciales incorrectas. Intente nuevamente.')
             }

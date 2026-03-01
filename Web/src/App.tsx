@@ -21,8 +21,7 @@ function AppInner() {
   ]
   const nav = user?.email === 'galaxycell@gmail.com' ? adminNav : techNav
 
-  if (!user) return <LoginPage onLogin={(u) => { setPage(u.email === 'galaxycell@gmail.com' ? 'dashboard' : 'services') }} />
-  const userD = { ...user, id: user.email === 'galaxycell@gmail.com' ? 'U001' : 'U002', nombre: user.email === 'galaxycell@gmail.com' ? 'Galaxy Cell' : 'Tecnico', rol: user.email === 'galaxycell@gmail.com' ? 'admin' : 'tecnico' }
+  if (!user) return <LoginPage onLogin={(u) => { setPage(u.rol === 'admin' ? 'dashboard' : 'services') }} />
 
   const renderPage = () => {
     switch (page) {
@@ -66,7 +65,13 @@ function AppInner() {
         </nav>
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm text-white btn-primary shrink-0">{user.photoURL}</div>
+            <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0">
+              <img
+                src="/assets/user.jpg"
+                alt="User"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <div><p className="text-white text-sm font-semibold leading-tight">{user.email}</p><p className="text-blue-300 text-xs capitalize">{user.email === 'galaxycell@gmail.com' ? 'Administrador' : 'Técnico'}</p></div>
           </div>
           <button onClick={() => { logout() }} className="w-full flex items-center gap-2 text-blue-300 hover:text-white text-xs font-medium px-2 py-2 rounded-xl hover:bg-white/10 transition-all">
@@ -100,11 +105,11 @@ function AppInner() {
             <div className="relative">
               <button onClick={() => setProfileOpen(!profileOpen)} className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${profileOpen ? 'bg-slate-100' : 'hover:bg-slate-50'}`}>
                 {/* Avatar manual */}
-                <div className="size-8 rounded-lg bg-[#1A237E] flex items-center justify-center text-white text-xs font-bold shrink-0">{getInitials(userD.nombre)}</div>
+                <div className="size-8 rounded-lg bg-[#1A237E] flex items-center justify-center text-white text-xs font-bold shrink-0">{getInitials(user.nombre)}</div>
 
                 <div className="hidden md:block text-left mr-1">
-                  <p className="text-xs font-bold text-slate-900 leading-none mb-0.5">{userD.nombre}</p>
-                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-tight">{userD.rol}</p>
+                  <p className="text-xs font-bold text-slate-900 leading-none mb-0.5">{user.nombre}</p>
+                  <p className="text-[10px] text-slate-500 font-medium uppercase tracking-tight">{user.rol}</p>
                 </div>
                 <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
               </button>
@@ -115,8 +120,8 @@ function AppInner() {
                   <div className="fixed inset-0 z-10" onClick={() => setProfileOpen(false)}></div>
                   <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden py-1 animate-in fade-in zoom-in duration-150">
                     <div className="px-4 py-3 border-b border-slate-50">
-                      <p className="text-sm font-bold text-slate-900">{userD.nombre}</p>
-                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                      <p className="text-sm font-bold text-slate-900">{user.nombre}</p>
+                      <p className="text-xs text-slate-500 truncate">{user.email}</p>
                     </div>
                     <button onClick={() => { logout() }} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
                       <LogOut size={16} />

@@ -22,6 +22,7 @@ export const FirebaseApi = {
     },
 
     // expose onAuthStateChanged for consumers that want to subscribe
+    // callback receives a Firebase `User | null` (consumers will map to backend user)
     onAuthStateChanged: (cb: (user: User | null) => void) => onAuthStateChanged(auth, cb),
 
     // init persistence explicitly (useful at app start)

@@ -1,13 +1,13 @@
-import type { User } from 'firebase/auth'
 import { FontStyle, PRODUCTS, REPAIR_ORDERS, SALES } from '../../utils/Data'
 import KPICards from './KPICards'
 import { SalesChart, TopProducts } from './Charts'
 import RecentRepairs from './RecentRepairs'
 import LowStockAlert from './LowStockAlert'
 import { DollarSign, Package, Wrench, TrendingUp, AlertTriangle, Smartphone } from 'lucide-react'
+import type { UserBack } from '../../utils/DataTypeBackEnd'
 
 interface DashboardPageProps {
-  user: User
+  user: UserBack
 }
 
 export default function DashboardView({ user }: DashboardPageProps) {
@@ -21,65 +21,65 @@ export default function DashboardView({ user }: DashboardPageProps) {
 
   const kpiCards = isAdmin
     ? [
-        {
-          title: 'Ventas Totales',
-          value: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-          description: `${todaySales.length} ventas completadas`,
-          icon: DollarSign,
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-100',
-        },
-        {
-          title: 'Equipos en Stock',
-          value: totalStock.toString(),
-          description: `${PRODUCTS.length} productos registrados`,
-          icon: Package,
-          color: 'text-cyan-600',
-          bgColor: 'bg-cyan-100',
-        },
-        {
-          title: 'Reparaciones Pendientes',
-          value: REPAIR_ORDERS.filter((r) => r.estado !== 'entregado').length.toString(),
-          description: `${REPAIR_ORDERS.length} órdenes totales`,
-          icon: Wrench,
-          color: 'text-indigo-600',
-          bgColor: 'bg-indigo-100',
-        },
-        {
-          title: 'Stock Bajo / Agotado',
-          value: lowStockItems.length.toString(),
-          description: 'Requieren atención',
-          icon: AlertTriangle,
-          color: 'text-red-600',
-          bgColor: 'bg-red-100',
-        },
-      ]
+      {
+        title: 'Ventas Totales',
+        value: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        description: `${todaySales.length} ventas completadas`,
+        icon: DollarSign,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-100',
+      },
+      {
+        title: 'Equipos en Stock',
+        value: totalStock.toString(),
+        description: `${PRODUCTS.length} productos registrados`,
+        icon: Package,
+        color: 'text-cyan-600',
+        bgColor: 'bg-cyan-100',
+      },
+      {
+        title: 'Reparaciones Pendientes',
+        value: REPAIR_ORDERS.filter((r) => r.estado !== 'entregado').length.toString(),
+        description: `${REPAIR_ORDERS.length} órdenes totales`,
+        icon: Wrench,
+        color: 'text-indigo-600',
+        bgColor: 'bg-indigo-100',
+      },
+      {
+        title: 'Stock Bajo / Agotado',
+        value: lowStockItems.length.toString(),
+        description: 'Requieren atención',
+        icon: AlertTriangle,
+        color: 'text-red-600',
+        bgColor: 'bg-red-100',
+      },
+    ]
     : [
-        {
-          title: 'Reparaciones Asignadas',
-          value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado !== 'entregado').length.toString(),
-          description: 'Pendientes de completar',
-          icon: Wrench,
-          color: 'text-primary',
-          bgColor: 'bg-primary/10',
-        },
-        {
-          title: 'Completadas',
-          value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado === 'entregado').length.toString(),
-          description: 'Reparaciones finalizadas',
-          icon: TrendingUp,
-          color: 'text-accent',
-          bgColor: 'bg-accent/10',
-        },
-        {
-          title: 'En Reparación',
-          value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado === 'en_reparacion').length.toString(),
-          description: 'En proceso actual',
-          icon: Smartphone,
-          color: 'text-secondary',
-          bgColor: 'bg-secondary/10',
-        },
-      ]
+      {
+        title: 'Reparaciones Asignadas',
+        value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado !== 'entregado').length.toString(),
+        description: 'Pendientes de completar',
+        icon: Wrench,
+        color: 'text-primary',
+        bgColor: 'bg-primary/10',
+      },
+      {
+        title: 'Completadas',
+        value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado === 'entregado').length.toString(),
+        description: 'Reparaciones finalizadas',
+        icon: TrendingUp,
+        color: 'text-accent',
+        bgColor: 'bg-accent/10',
+      },
+      {
+        title: 'En Reparación',
+        value: REPAIR_ORDERS.filter((r) => r.tecnicoId === userD.id && r.estado === 'en_reparacion').length.toString(),
+        description: 'En proceso actual',
+        icon: Smartphone,
+        color: 'text-secondary',
+        bgColor: 'bg-secondary/10',
+      },
+    ]
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-gray-50 min-h-screen">
