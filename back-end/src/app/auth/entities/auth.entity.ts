@@ -16,6 +16,10 @@ export class Auth {
     @Column({ type: "enum", enum: RolUsuario })
     rol: RolUsuario;
 
+    @Column({ default: true })
+    isActive: boolean
+
+
 
 
 }

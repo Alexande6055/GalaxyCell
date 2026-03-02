@@ -1,8 +1,9 @@
-import { Controller, Get, Request } from "@nestjs/common";
+import { Body, Controller, Get, Post, Request } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/decorators/roles.decoratos";
 import { RolUsuario } from "src/utils/enums/RolUsuarios.enum";
 import { ApiBearerAuth } from "@nestjs/swagger";
+import { UserCreateDTO } from "src/app/auth/dto/create-auth.dto";
 
 @ApiBearerAuth('firebase-auth')
 @Controller('auth')
@@ -16,5 +17,14 @@ export class AuthController {
     return this.authService.buscarPorUidFirebase(uid)
   }
 
-
+  @Roles(RolUsuario.ADMIN)
+  @Post()
+  createUserTech(@Body() userCreateDTO: UserCreateDTO) {
+    return this.authService.createUserTech(userCreateDTO)
+  }
+  @Roles(RolUsuario.ADMIN)
+  @Get("list-user-tech")
+  listUserTech() {
+    return this.authService.listUserTech()
+  }
 }

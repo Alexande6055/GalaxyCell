@@ -9,7 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { FirebaseGuard } from './guard/firebase.guard';
 import { RolesGuard } from './guard/roles.guard';
 import { FirebaseModule } from './firebase/firebase.module';
-import { AuthModule } from 'auth/auth/auth.module';
+import { AuthModule } from 'src/app/auth/auth/auth.module';
 
 @Module({
   imports: [

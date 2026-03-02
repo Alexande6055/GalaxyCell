@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -47,6 +47,38 @@ export class FirebaseService {
         }
     }
 
+    /**Function for created User with Email and Password method */
+    async createUserWithEmail(email: string, password: string, displayName?: string) {
+        try {
+            const userRecord = await admin.auth().createUser({
+                email,
+                password,
+                displayName,
+                emailVerified: false,
+                disabled: false,
+            });
+
+            return {
+                uid: userRecord.uid,
+                email: userRecord.email,
+                displayName: userRecord.displayName,
+            };
+
+        } catch (error: any) {
+            if (error.code === 'auth/email-already-exists') {
+                throw new BadRequestException('El correo ya está registrado');
+            }
+
+            if (error.code === 'auth/invalid-password') {
+                throw new BadRequestException('La contraseña debe tener al menos 6 caracteres');
+            }
+            if (error.code === 'auth/invalid-email') {
+                throw new BadRequestException('El correo ingresado no es un correo valido');
+            }
+
+            throw new InternalServerErrorException('Error creando usuario');
+        }
+    }
 
 
 }
