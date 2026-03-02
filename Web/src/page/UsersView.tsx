@@ -6,12 +6,10 @@ import type { UserBack } from "../utils/DataTypeBackEnd"
 interface UserCreate {
   uidFirebase: string,
   nombre: string,
-  //usuario: formData.get("usuario") as string,
   password: string,
   rol: "tecnico",
   isActive: boolean,
   email: string,
-  //telefono: formData.get("telefono") as string,
 }
 export default function UsersView() {
   const [users, setUsers] = useState<UserBack[]>([])
@@ -33,7 +31,7 @@ export default function UsersView() {
       u.email.toLowerCase().includes(search.toLowerCase())
   )
 
-  const handleSave = (formData: FormData) => {
+  const handleCreate = (formData: FormData) => {
     const newUser: UserCreate = {
       uidFirebase: editingUser?.uidFirebase || `U${String(Date.now()).slice(-3)}`,
       nombre: formData.get("nombre") as string,
@@ -57,6 +55,40 @@ export default function UsersView() {
     setEditingUser(null)
   }
 
+  const handleUpdate = async (formData: FormData) => {
+    if (!editingUser) return;
+
+    const passwordValue = formData.get("password") as string;
+
+    const updatePayload = {
+      email: formData.get("email") as string,
+      nombre: formData.get("nombre") as string,
+      password:
+        passwordValue && passwordValue.trim() !== ""
+          ? passwordValue
+          : null,
+    };
+
+    const response = await Auth.updateUserTech({ ...updatePayload });
+
+    if (!response) {
+      toast.error("No se pudo actualizar el usuario");
+      return;
+    }
+
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.uidFirebase === editingUser.uidFirebase
+          ? { ...u, nombre: updatePayload.nombre, email: updatePayload.email }
+          : u
+      )
+    );
+
+    toast.success("Usuario actualizado");
+
+    setDialogOpen(false);
+    setEditingUser(null);
+  };
   const toggleStatus = (userId: string) => {
     setUsers((prev) =>
       prev.map((u) =>
@@ -110,8 +142,14 @@ export default function UsersView() {
 
               <form
                 onSubmit={(e) => {
-                  e.preventDefault()
-                  handleSave(new FormData(e.currentTarget))
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+
+                  if (editingUser) {
+                    handleUpdate(formData);
+                  } else {
+                    handleCreate(formData);
+                  }
                 }}
                 className="grid gap-5"
               >
@@ -128,23 +166,16 @@ export default function UsersView() {
                     />
                   </div>
 
-                  { /* <div>
-                    <label className="block text-sm font-semibold text-[#1A237E]" style={{ fontFamily: "Inter, sans-serif" }}>Usuario</label>
-                    <input
-                      name="usuario"
-                      defaultValue={editingUser?.usuario}
-                      required
-                      className="mt-2 w-full rounded-2xl border border-[#E2E8F0] px-4 py-3 bg-[#F8F9FA] focus:ring-2 focus:ring-[#007BFF] transition"
-                    />
-                  </div>*/}
-
                   <div>
                     <label className="block text-sm font-semibold text-[#1A237E]" style={{ fontFamily: "Inter, sans-serif" }}>Contraseña</label>
                     <input
                       type="password"
                       name="password"
-                      defaultValue={editingUser?.password}
-                      required
+                      placeholder={
+                        editingUser
+                          ? "Opcional - dejar vacío para no cambiar"
+                          : "Mínimo 6 caracteres"
+                      }
                       className="mt-2 w-full rounded-2xl border border-[#E2E8F0] px-4 py-3 bg-[#F8F9FA] focus:ring-2 focus:ring-[#007BFF] transition"
                     />
                   </div>
@@ -160,15 +191,6 @@ export default function UsersView() {
                     />
                   </div>
 
-                  {/* <div>
-                    <label className="block text-sm font-semibold text-[#1A237E]" style={{ fontFamily: "Inter, sans-serif" }}>Teléfono</label>
-                    <input
-                      name="telefono"
-                      defaultValue={editingUser?.telefono}
-                      required
-                      className="mt-2 w-full rounded-2xl border border-[#E2E8F0] px-4 py-3 bg-[#F8F9FA] focus:ring-2 focus:ring-[#007BFF] transition"
-                    />
-                  </div>*/}
 
                   <div>
                     <label className="block text-sm font-semibold text-[#1A237E]" style={{ fontFamily: "Inter, sans-serif" }}>Rol Técnico</label>

@@ -49,5 +49,39 @@ export const Auth = {
                 console.error('An unexpected error occurred:', error);
             }
         }
+    },
+    async updateUserTech(updateUser: {
+        email: string,
+        nombre: string,
+        password: string | null
+    }): Promise<UserBack | undefined> {
+        try {
+            const user = auth.currentUser
+
+            if (!user) {
+                throw new Error("No authenticated user")
+            }
+
+            const token = await user.getIdToken(true)
+
+            const { data }: AxiosResponse<UserBack> = await axios.patch(
+                `${import.meta.env.VITE_BASE_URL}/auth/update-user-tech`,
+                updateUser, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+
+            return data ?? undefined
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error updating user:', error.response?.data || error.message)
+            } else {
+                console.error('Unexpected error:', error)
+            }
+        }
     }
 }

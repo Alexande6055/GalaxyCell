@@ -5,9 +5,11 @@ import { Auth } from 'src/app/auth/entities/auth.entity';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { RolUsuario } from 'src/utils/enums/RolUsuarios.enum';
 import { DataSource, Repository } from 'typeorm';
+import { UserUpdateDTO } from '../dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
+
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
@@ -33,5 +35,18 @@ export class AuthService {
   async listUserTech() {
     const userTech = await this.authRepository.find({ where: { rol: RolUsuario.TECNICO } });
     return userTech;
+  }
+  async updateUserTech(dto: UserUpdateDTO) {
+    return this.dataSource.transaction(async (manager) => {
+
+      const user = await manager.findOneBy(Auth, { email: dto.email });
+      if (!user) throw new NotFoundException("User not Found")
+      user.nombre = dto.nombre;
+      const userUpdated = manager.save(user);
+      if (dto.password)
+        await this.firebaseService.updatePasswordUser(user.uidFirebase, dto.password)
+      return userUpdated;
+    })
+
   }
 }

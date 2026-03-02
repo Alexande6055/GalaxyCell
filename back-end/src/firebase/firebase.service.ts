@@ -65,19 +65,48 @@ export class FirebaseService {
             };
 
         } catch (error: any) {
-            if (error.code === 'auth/email-already-exists') {
-                throw new BadRequestException('El correo ya está registrado');
-            }
-
-            if (error.code === 'auth/invalid-password') {
-                throw new BadRequestException('La contraseña debe tener al menos 6 caracteres');
-            }
-            if (error.code === 'auth/invalid-email') {
-                throw new BadRequestException('El correo ingresado no es un correo valido');
-            }
+            catchErrorFirebase(error)
 
             throw new InternalServerErrorException('Error creando usuario');
         }
+    }
+
+    /**Function for update password of user */
+    async updatePasswordUser(uid: string, newPassword: string) {
+        try {
+            const userRecord = await admin.auth().updateUser(uid, {
+                password: newPassword,
+            });
+
+            return {
+                uid: userRecord.uid,
+                email: userRecord.email,
+                message: 'Contraseña actualizada correctamente'
+            };
+
+        } catch (error: any) {
+
+            catchErrorFirebase(error)
+
+            throw new InternalServerErrorException('Error actualizando la contraseña');
+        }
+    }
+
+}
+
+function catchErrorFirebase(error: any) {
+    if (error.code === 'auth/email-already-exists') {
+        throw new BadRequestException('El correo ya está registrado');
+    }
+
+    if (error.code === 'auth/invalid-password') {
+        throw new BadRequestException('La contraseña debe tener al menos 6 caracteres');
+    }
+    if (error.code === 'auth/invalid-email') {
+        throw new BadRequestException('El correo ingresado no es un correo valido');
+    }
+    if (error.code === 'auth/user-not-found') {
+        throw new BadRequestException('Usuario no encontrado');
     }
 
 

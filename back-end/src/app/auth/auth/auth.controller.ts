@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Request } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Request } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Roles } from "src/decorators/roles.decoratos";
 import { RolUsuario } from "src/utils/enums/RolUsuarios.enum";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { UserCreateDTO } from "src/app/auth/dto/create-auth.dto";
+import { UserUpdateDTO } from "../dto/update-auth.dto";
 
 @ApiBearerAuth('firebase-auth')
 @Controller('auth')
@@ -26,5 +27,10 @@ export class AuthController {
   @Get("list-user-tech")
   listUserTech() {
     return this.authService.listUserTech()
+  }
+
+  @Patch("update-user-tech")
+  updateUserTech(@Body()dto:UserUpdateDTO) {
+    return this.authService.updateUserTech(dto)
   }
 }
