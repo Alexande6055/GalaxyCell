@@ -1,10 +1,10 @@
-import { FontStyle, PRODUCTS, REPAIR_ORDERS, SALES } from '../../utils/Data'
-import KPICards from './KPICards'
-import { SalesChart, TopProducts } from './Charts'
-import RecentRepairs from './RecentRepairs'
-import LowStockAlert from './LowStockAlert'
+import { FontStyle, PRODUCTS, REPAIR_ORDERS, SALES } from '../utils/Data'
+import KPICards from '../components/admin/KPICards'
+import { SalesChart, TopProducts } from '../components/admin/Charts'
+import RecentRepairs from '../components/admin/RecentRepairs'
+import LowStockAlert from '../components/admin/LowStockAlert'
 import { DollarSign, Package, Wrench, TrendingUp, AlertTriangle, Smartphone } from 'lucide-react'
-import type { UserBack } from '../../utils/DataTypeBackEnd'
+import type { UserBack } from '../utils/DataTypeBackEnd'
 
 interface DashboardPageProps {
   user: UserBack
@@ -12,7 +12,7 @@ interface DashboardPageProps {
 
 export default function DashboardView({ user }: DashboardPageProps) {
   const userD = { ...user, id: user.email === 'galaxycell@gmail.com' ? 'U001' : 'U002' }
-  const isAdmin = user.email === 'galaxycell@gmail.com'
+  const isAdmin = user.rol === 'admin'
 
   const totalStock = PRODUCTS.reduce((acc, p) => acc + p.stock, 0)
   const lowStockItems = PRODUCTS.filter((p) => p.estado === 'bajo_stock' || p.estado === 'agotado')

@@ -413,3 +413,26 @@ export const TOP_PRODUCTS = [
   { nombre: "Cargador USB-C 65W", ventas: 48 },
   { nombre: "AirPods Pro 2", ventas: 15 },
 ]
+
+export const INITIAL_SERVICES = [
+  { id: "SRV-001", date: "2026-02-27", customer: "Elena Castro", phone: "+593 99 123 4567", device: "iPhone 13", issue: "Pantalla rota", status: "in_diagnosis", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Luis Herrera", notes: "Cristal completamente fragmentado", estimatedDate: "2026-03-01" },
+  { id: "SRV-002", date: "2026-02-26", customer: "Marco Suárez", phone: "+593 98 765 4321", device: "Samsung Galaxy A54", issue: "No carga", status: "in_repair", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Ana Ríos", notes: "Puerto USB-C dañado, requiere reemplazo", estimatedDate: "2026-02-28" },
+  { id: "SRV-003", date: "2026-02-25", customer: "Valeria Mora", phone: "+593 97 321 6547", device: "Motorola Edge 30", issue: "Batería deficiente", status: "repaired", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Luis Herrera", notes: "Batería reemplazada exitosamente", estimatedDate: "2026-02-26" },
+  { id: "SRV-004", date: "2026-02-24", customer: "Diego Romero", phone: "+593 96 654 3210", device: "Xiaomi Redmi Note 12", issue: "Cámara trasera borrosa", status: "waiting_parts", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Ana Ríos", notes: "Módulo de cámara en espera de repuesto", estimatedDate: "2026-03-03" },
+  { id: "SRV-005", date: "2026-02-23", customer: "Isabella Fuentes", phone: "+593 95 111 2233", device: "iPhone 14 Pro", issue: "Face ID no funciona", status: "delivered", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Luis Herrera", notes: "Problema resuelto. Sensor reemplazado.", estimatedDate: "2026-02-25" },
+  { id: "SRV-006", date: "2026-02-27", customer: "Andres Paredes", phone: "+593 99 887 6655", device: "Google Pixel 7", issue: "Speaker dañado", status: "pending", techId: "K15MOpFntaSJgCD6KXZaRCWEncg2", techName: "Sin asignar", notes: "", estimatedDate: "2026-03-02" },
+];
+export const STATUS_CONFIG = {
+  pending: { label: "Pendiente", color: "#F59E0B", bg: "bg-amber-100 text-amber-700" },
+  in_diagnosis: { label: "En Diagnóstico", color: "#007BFF", bg: "bg-blue-100 text-blue-700" },
+  in_repair: { label: "En Reparación", color: "#8B5CF6", bg: "bg-purple-100 text-purple-700" },
+  waiting_parts: { label: "Esperando Repuesto", color: "#F97316", bg: "bg-orange-100 text-orange-700" },
+  repaired: { label: "Reparado", color: "#10B981", bg: "bg-emerald-100 text-emerald-700" },
+  delivered: { label: "Entregado", color: "#6B7280", bg: "bg-gray-100 text-gray-600" },
+  completed: { label: "Completado", color: "#10B981", bg: "bg-emerald-100 text-emerald-700" },
+  available: { label: "Disponible", color: "#10B981", bg: "bg-emerald-100 text-emerald-700" },
+  low_stock: { label: "Stock Bajo", color: "#F59E0B", bg: "bg-amber-100 text-amber-700" },
+  out_of_stock: { label: "Sin Stock", color: "#FF5252", bg: "bg-red-100 text-red-700" },
+  active: { label: "Activo", color: "#10B981", bg: "bg-emerald-100 text-emerald-700" },
+  blocked: { label: "Bloqueado", color: "#FF5252", bg: "bg-red-100 text-red-700" },
+};

@@ -3,4 +3,5 @@ export interface UserBack {
     nombre: string
     email: string
     rol: string
+    isActive: boolean
 }

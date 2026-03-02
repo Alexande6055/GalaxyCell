@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import LoginPage from './page/LoginPage'
-import { Bell, ChevronDown, History, LayoutDashboard, LogOut, Menu, Search, Smartphone, Wrench } from 'lucide-react'
+import { Bell, ChevronDown, History, LayoutDashboard, LogOut, Menu, Search, Smartphone, UserCog, Wrench } from 'lucide-react'
 import { FontStyle, NOTIFICATIONS } from './utils/Data'
-import DashboardView from './components/admin/Dashboard'
+import DashboardView from './page/Dashboard'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Services from './components/Tech/ServicesOrder'
+import UsersView from './page/UsersView'
 
 function AppInner() {
   const { user, logout } = useAuth()
@@ -13,22 +15,29 @@ function AppInner() {
   const [searchQuery, setSearchQuery] = useState('')
   const [profileOpen, setProfileOpen] = useState(false) // Estado para el dropdown manual
 
-  const adminNav = [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }]
+  const adminNav = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: "usuarios", label: "Usuarios", icon: UserCog, adminOnly: true },
+
+  ]
   const techNav = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'services', label: 'Mis Órdenes', icon: Wrench },
     { id: 'history', label: 'Historial', icon: History },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
   ]
   const nav = user?.email === 'galaxycell@gmail.com' ? adminNav : techNav
 
-  if (!user) return <LoginPage onLogin={(u) => { setPage(u.rol === 'admin' ? 'dashboard' : 'services') }} />
+  if (!user) return <LoginPage onLogin={(u) => { setPage(u.rol === 'admin' ? 'dashboard' : 'dashboard') }} />
 
   const renderPage = () => {
     switch (page) {
       case 'dashboard':
         return <DashboardView user={user} />
       case 'services':
-        return <div><p>Hola Tecnico</p></div>
+        return <Services user={user} />
+      case 'usuarios':
+      return <UsersView/>
       default:
         return null
     }
