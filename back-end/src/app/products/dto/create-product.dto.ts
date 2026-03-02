@@ -22,6 +22,9 @@ export class ProductDto {
     @IsNumber()
     @IsNotEmpty()
     quantity: number;
+    
+    @IsString()
+    image: string;
 
     @IsString()
     @IsNotEmpty({message: 'La categoría es requerida'})

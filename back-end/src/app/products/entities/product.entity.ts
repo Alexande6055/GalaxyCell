@@ -19,6 +19,9 @@ export class ProductEntity {
     @Column()
     quantity: number;
 
+    @Column()
+    image: string;
+
     @ManyToOne(() => CategoryEntity, (category) => category.products)
     @JoinColumn({ name: 'category_id' })
     category: CategoryEntity;
