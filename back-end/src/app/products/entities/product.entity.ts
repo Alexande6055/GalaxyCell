@@ -20,7 +20,7 @@ export class ProductEntity {
     quantity: number;
 
     @Column()
-    image: string;
+    coverImagePath: string;
 
     @ManyToOne(() => CategoryEntity, (category) => category.products)
     @JoinColumn({ name: 'category_id' })

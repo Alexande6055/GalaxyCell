@@ -3,38 +3,62 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { ILike, Repository } from 'typeorm';
 import { ProductDto } from './dto/create-product.dto';
+import { ImagesService } from 'src/services/images.service';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class ProductService {
     constructor(
         @InjectRepository(ProductEntity)
-        private readonly productRepository: Repository<ProductEntity>
+        private readonly productRepository: Repository<ProductEntity>,
+        private readonly imagesService: ImagesService
     ) { }
 
-    async create(productDto: ProductDto) {
+    async create(productDto: ProductDto, file?: Express.Multer.File) {
+        let saved: any = null;
+
         try {
             const exitingProduct = await this.productRepository.findOne({
-                where: { name: productDto.name }
+                where: { name: productDto.name },
             });
 
-            if (exitingProduct) {
-                throw new Error('This product already exists');
-            }
+            if (exitingProduct) throw new Error('El nombre del producto ya existe');
 
-            // IMPORTANTE: Mapear los strings a objetos con ID
+            // 1) Crear y guardar producto primero (para tener uuid)
             const product = this.productRepository.create({
                 ...productDto,
                 category: { id: productDto.category } as any,
                 brand: { id: productDto.brand } as any,
             });
 
-            return await this.productRepository.save(product);
+            saved = await this.productRepository.save(product); // ✅ ahora queda disponible en catch
+
+            // 2) Si vino imagen, guardarla en carpeta del producto y actualizar coverImagePath
+            if (file) {
+                const img = await this.imagesService.saveProductImage(saved.id, file);
+                saved.coverImagePath = img.relativePath;
+
+                const updated = await this.productRepository.save(saved);
+                return { ...updated, coverUrl: img.url };
+            }
+
+            return saved;
         } catch (error) {
-            // Esto es lo que está imprimiendo tu consola
-            console.error("Detalle del error:", error.message);
-            throw new Error('Error al crear el producto');
+            // 1) borrar temporal si existe (si quedó en tmp)
+            if (file?.path) {
+                try { await fs.unlink(file.path); } catch { }
+            }
+
+            // 2) borrar producto SOLO si realmente se creó
+            if (saved?.id) {
+                try { await this.productRepository.delete(saved.id); } catch { }
+            }
+
+            console.error('Error create product:', error);
+            throw new Error('Falló guardar el producto, verifique los datos e intente nuevamente');
         }
     }
+
 
     async findAll(page: number = 1, limit: number = 15) {
         try {
@@ -45,7 +69,7 @@ export class ProductService {
                     description: true,
                     price: true,
                     quantity: true,
-                    image: true
+                    coverImagePath: true
                 },
                 skip: (page - 1) * limit,
                 take: limit
@@ -74,7 +98,7 @@ export class ProductService {
                     description: true,
                     price: true,
                     quantity: true,
-                    image: true
+                    coverImagePath: true
                 }
             });
             if (!product) {
@@ -134,7 +158,7 @@ export class ProductService {
                     description: true,
                     price: true,
                     quantity: true,
-                    image: true,
+                    coverImagePath: true,
                 },
                 skip: (page - 1) * limit,
                 take: limit,
@@ -167,7 +191,7 @@ export class ProductService {
                     description: true,
                     price: true,
                     quantity: true,
-                    image: true,
+                    coverImagePath: true,
                 },
                 skip: (page - 1) * limit,
                 take: limit,
@@ -200,7 +224,7 @@ export class ProductService {
                     description: true,
                     price: true,
                     quantity: true,
-                    image: true,
+                    coverImagePath: true,
                 },
                 skip: (page - 1) * limit,
                 take: limit,
