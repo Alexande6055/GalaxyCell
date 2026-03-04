@@ -1,87 +1,24 @@
-import axios, { type AxiosResponse } from "axios"
-import type { UserBack } from "../../utils/DataTypeBackEnd"
-import { auth } from "../firebase/config";
+import type { UserBack } from "../../utils/DataTypeBackEnd";
+import apiClient from "../utils/apiClient";
 
 export const Auth = {
-
-    async login(token: string) {
-        try {
-            const data: AxiosResponse<UserBack> = await axios.get(`${import.meta.env.VITE_BASE_URL}/auth`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            if (data.data)
-                return data.data
-            return undefined;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Error fetching users:', error.message);
-            } else {
-                console.error('An unexpected error occurred:', error);
-            }
-        }
-
+    async login(): Promise<UserBack | undefined> {
+        // El token ya se envía solo gracias al interceptor
+        const { data } = await apiClient.get<UserBack>("/auth");
+        return data;
     },
+
     async listUserTech(): Promise<UserBack[] | undefined> {
-        try {
-            const user = auth.currentUser
-
-            if (!user) {
-                throw new Error("No authenticated user")
-            }
-
-            // true = fuerza refresh del token
-            const token = await user.getIdToken(true)
-
-            const data: AxiosResponse<UserBack[]> = await axios.get(`${import.meta.env.VITE_BASE_URL}/auth/list-user-tech`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            if (data.data)
-                return data.data
-            return undefined;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Error fetching users:', error.message);
-            } else {
-                console.error('An unexpected error occurred:', error);
-            }
-        }
+        const { data } = await apiClient.get<UserBack[]>("/auth/list-user-tech");
+        return data;
     },
+
     async updateUserTech(updateUser: {
-        email: string,
-        nombre: string,
-        password: string | null
+        email: string;
+        nombre: string;
+        password: string | null;
     }): Promise<UserBack | undefined> {
-        try {
-            const user = auth.currentUser
-
-            if (!user) {
-                throw new Error("No authenticated user")
-            }
-
-            const token = await user.getIdToken(true)
-
-            const { data }: AxiosResponse<UserBack> = await axios.patch(
-                `${import.meta.env.VITE_BASE_URL}/auth/update-user-tech`,
-                updateUser, 
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            )
-
-            return data ?? undefined
-
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Error updating user:', error.response?.data || error.message)
-            } else {
-                console.error('Unexpected error:', error)
-            }
-        }
+        const { data } = await apiClient.patch<UserBack>("/auth/update-user-tech", updateUser);
+        return data;
     }
-}
+};
