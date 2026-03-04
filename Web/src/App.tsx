@@ -6,6 +6,7 @@ import DashboardView from './page/Dashboard'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Services from './components/Tech/ServicesOrder'
 import UsersView from './page/UsersView'
+import { Toaster } from 'sonner'
 
 function AppInner() {
   const { user, logout } = useAuth()
@@ -37,7 +38,7 @@ function AppInner() {
       case 'services':
         return <Services user={user} />
       case 'usuarios':
-      return <UsersView/>
+        return <UsersView />
       default:
         return null
     }
@@ -57,6 +58,7 @@ function AppInner() {
 
   return (
     <div className={`min-h-screen flex text-gray-800`} style={{ background: '#F8F9FA' }}>
+      <Toaster richColors position="top-right" />
       <FontStyle />
       {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col transition-transform duration-300 ${sideOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`} style={{ background: '#1A237E', boxShadow: '4px 0 20px rgba(0,0,0,0.15)' }}>
