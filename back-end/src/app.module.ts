@@ -7,6 +7,11 @@ import { CategoryModule } from './app/category/category.module';
 import { ProductModule } from './app/products/product.module';
 import { BrandModule } from './app/brand/brand.module';
 import { ImagesModule } from './images/images.module';
+import { EquipmentTypesModule } from './app/technical_services/equipment_types/equipment_types.module';
+import { ClientModule } from './app/client/client.module';
+import { ServiceOrdersModule } from './app/technical_services/service_orders/service_orders.module';
+import { ServiceDetailsModule } from './app/technical_services/service_details/service_details.module';
+import { KnowledgeBaseModule } from './app/technical_services/knowledge_base/knowledge_base.module';
 
 @Module({
   imports: [
@@ -29,7 +34,9 @@ import { ImagesModule } from './images/images.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    CategoryModule, ProductModule, BrandModule,ImagesModule
+    CategoryModule, ProductModule, BrandModule,ImagesModule,
+    EquipmentTypesModule, ClientModule, ServiceOrdersModule,
+    ServiceDetailsModule,KnowledgeBaseModule
   ],
 })
 export class AppModule { }
