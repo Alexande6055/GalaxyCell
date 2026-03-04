@@ -1,8 +1,8 @@
-import type { UserCreate } from "../../page/UsersView"
+import type { UserBack } from "../../utils/DataTypeBackEnd"
 
 interface UserModalProps {
   isOpen: boolean
-  editingUser: UserCreate | null
+  editingUser: UserBack | null
   onClose: () => void
   onSubmit: (formData: FormData) => void
 }

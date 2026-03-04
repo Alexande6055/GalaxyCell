@@ -7,20 +7,12 @@ import UserSearchBar from "../components/UsersView/UserSearchBar"
 import UserTable from "../components/UsersView/UserTable"
 import UserModal from "../components/UsersView/UserModal"
 
-export interface UserCreate {
-  uidFirebase: string,
-  nombre: string,
-  password: string,
-  rol: "tecnico",
-  isActive: boolean,
-  email: string,
-}
 
 export default function UsersView() {
   const [users, setUsers] = useState<UserBack[]>([])
   const [search, setSearch] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingUser, setEditingUser] = useState<UserCreate | null>(null)
+  const [editingUser, setEditingUser] = useState<UserBack | null>(null)
 
   useEffect(() => {
     const fetchUserTech = async () => {
@@ -36,25 +28,19 @@ export default function UsersView() {
       u.email.toLowerCase().includes(search.toLowerCase())
   )
 
-  const handleCreate = (formData: FormData) => {
-    const newUser: UserCreate = {
-      uidFirebase: editingUser?.uidFirebase || `U${String(Date.now()).slice(-3)}`,
+  const handleCreate = async (formData: FormData) => {
+    const newUser = {
       nombre: formData.get("nombre") as string,
-      //usuario: formData.get("usuario") as string,
       password: formData.get("password") as string,
-      rol: "tecnico",
-      isActive: editingUser?.isActive || false,
       email: formData.get("email") as string,
-      //telefono: formData.get("telefono") as string,
     }
-
-    if (editingUser) {
-      setUsers((prev) => prev.map((u) => (u.uidFirebase === editingUser.uidFirebase ? newUser : u)))
-      toast.success("Usuario actualizado")
-    } else {
-      setUsers((prev) => [...prev, newUser])
-      toast.success("Usuario registrado")
+    const response = await Auth.createUserTech({ email: newUser.email, nombre: newUser.nombre, password: newUser.password });
+    if (!response) {
+      toast.error("No se pudo actualizar el usuario");
+      return;
     }
+    setUsers((prev) => [...prev, response])
+    toast.success("Usuario registrado")
 
     setDialogOpen(false)
     setEditingUser(null)
@@ -128,7 +114,7 @@ export default function UsersView() {
         <UserTable
           users={filteredUsers}
           onEditClick={(user) => {
-            setEditingUser(user as UserCreate)
+            setEditingUser(user)
             setDialogOpen(true)
           }}
           onToggleStatus={toggleStatus}
