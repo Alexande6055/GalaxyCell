@@ -20,5 +20,14 @@ export const Auth = {
     }): Promise<UserBack | undefined> {
         const { data } = await apiClient.patch<UserBack>("/auth/update-user-tech", updateUser);
         return data;
+    },
+
+    async createUserTech(createUser: {
+        email: string;
+        nombre: string;
+        password: string;
+    }): Promise<UserBack | undefined> {
+        const { data } = await apiClient.post<UserBack>("/auth/create-user-tech", createUser)
+        return data;
     }
 };
