@@ -1,5 +1,6 @@
 import axios from "axios";
 import { auth } from "../firebase/config";
+import { toast } from "sonner";
 
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
@@ -27,6 +28,7 @@ apiClient.interceptors.response.use(
     (error) => {
         const message = error.response?.data?.message || error.message || "Error inesperado";
         console.error("API Error:", message);
+        toast.error(message); // 🔥 aquí
         return Promise.reject(error);
     }
 );
