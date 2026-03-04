@@ -19,7 +19,7 @@ export class AuthController {
   }
 
   @Roles(RolUsuario.ADMIN)
-  @Post()
+  @Post('create-user-tech')
   createUserTech(@Body() userCreateDTO: UserCreateDTO) {
     return this.authService.createUserTech(userCreateDTO)
   }
