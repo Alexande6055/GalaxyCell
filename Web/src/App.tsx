@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import LoginPage from './page/LoginPage'
-import { Bell, ChevronDown, History, LayoutDashboard, LogOut, Menu, Search, Smartphone, UserCog, Wrench } from 'lucide-react'
+import { Bell, ChevronDown, History, Inbox, LayoutDashboard, LogOut, Menu, Search, Smartphone, UserCog, Wrench } from 'lucide-react'
 import { FontStyle, NOTIFICATIONS } from './utils/Data'
 import DashboardView from './page/Dashboard'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Services from './components/Tech/ServicesOrder'
 import UsersView from './page/UsersView'
 import { Toaster } from 'sonner'
+import { InventoryView } from './page/InventoryView'
+import { SolicitudesView } from './components/Tech/SolicitudesView'
 
 function AppInner() {
   const { user, logout } = useAuth()
@@ -19,6 +21,7 @@ function AppInner() {
   const adminNav = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: "usuarios", label: "Usuarios", icon: UserCog, adminOnly: true },
+    { id: "inventory", label: "Inventario", icon: UserCog, adminOnly: true },
 
   ]
   const techNav = [
@@ -26,6 +29,7 @@ function AppInner() {
     { id: 'services', label: 'Mis Órdenes', icon: Wrench },
     { id: 'history', label: 'Historial', icon: History },
     { id: 'notifications', label: 'Notificaciones', icon: Bell },
+    { id: 'solicitudes', label: 'Solicitudes', icon: Inbox }
   ]
   const nav = user?.email === 'galaxycell@gmail.com' ? adminNav : techNav
 
@@ -39,6 +43,10 @@ function AppInner() {
         return <Services user={user} />
       case 'usuarios':
         return <UsersView />
+      case 'inventory':
+        return <InventoryView />
+      case 'solicitudes':
+        return <SolicitudesView />
       default:
         return null
     }

@@ -1,3 +1,5 @@
+import { createContext, useContext } from "react";
+
 export function FontStyle() {
     return (<style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -39,149 +41,6 @@ export const NOTIFICATIONS = [
 ];
 
 export type ProductCategory = "celular" | "accesorio"
-
-export interface Product {
-    id: string
-    nombre: string
-    categoria: ProductCategory
-    marca: string
-    modelo: string
-    imei?: string
-    precio_compra: number
-    precio_venta: number
-    stock: number
-    estado: "disponible" | "agotado" | "bajo_stock"
-    imagen?: string
-    descripcion: string
-}
-
-export const PRODUCTS: Product[] = [
-    {
-        id: "P001",
-        nombre: "Samsung Galaxy S24 Ultra",
-        categoria: "celular",
-        marca: "Samsung",
-        modelo: "Galaxy S24 Ultra",
-        imei: "354789102345671",
-        precio_compra: 850,
-        precio_venta: 1199.99,
-        stock: 8,
-        estado: "disponible",
-        descripcion: "256GB, Titanium Black, 5G",
-    },
-    {
-        id: "P002",
-        nombre: "iPhone 15 Pro Max",
-        categoria: "celular",
-        marca: "Apple",
-        modelo: "iPhone 15 Pro Max",
-        imei: "354789102345672",
-        precio_compra: 900,
-        precio_venta: 1299.99,
-        stock: 5,
-        estado: "disponible",
-        descripcion: "256GB, Natural Titanium, 5G",
-    },
-    {
-        id: "P003",
-        nombre: "Xiaomi Redmi Note 13 Pro",
-        categoria: "celular",
-        marca: "Xiaomi",
-        modelo: "Redmi Note 13 Pro",
-        imei: "354789102345673",
-        precio_compra: 180,
-        precio_venta: 299.99,
-        stock: 15,
-        estado: "disponible",
-        descripcion: "128GB, Midnight Black, 4G",
-    },
-    {
-        id: "P004",
-        nombre: "Samsung Galaxy A15",
-        categoria: "celular",
-        marca: "Samsung",
-        modelo: "Galaxy A15",
-        imei: "354789102345674",
-        precio_compra: 110,
-        precio_venta: 189.99,
-        stock: 2,
-        estado: "bajo_stock",
-        descripcion: "128GB, Blue Black, 4G",
-    },
-    {
-        id: "P005",
-        nombre: "Motorola Edge 40 Neo",
-        categoria: "celular",
-        marca: "Motorola",
-        modelo: "Edge 40 Neo",
-        imei: "354789102345675",
-        precio_compra: 220,
-        precio_venta: 349.99,
-        stock: 0,
-        estado: "agotado",
-        descripcion: "256GB, Black Beauty, 5G",
-    },
-    {
-        id: "P006",
-        nombre: "Funda Samsung S24 Ultra",
-        categoria: "accesorio",
-        marca: "Samsung",
-        modelo: "Funda Original S24 Ultra",
-        precio_compra: 12,
-        precio_venta: 29.99,
-        stock: 30,
-        estado: "disponible",
-        descripcion: "Funda de silicona original color negro",
-    },
-    {
-        id: "P007",
-        nombre: "Cargador Rápido USB-C 65W",
-        categoria: "accesorio",
-        marca: "Anker",
-        modelo: "Nano II 65W",
-        precio_compra: 18,
-        precio_venta: 39.99,
-        stock: 25,
-        estado: "disponible",
-        descripcion: "Cargador rápido GaN con USB-C",
-    },
-    {
-        id: "P008",
-        nombre: "AirPods Pro 2da Gen",
-        categoria: "accesorio",
-        marca: "Apple",
-        modelo: "AirPods Pro 2",
-        precio_compra: 150,
-        precio_venta: 249.99,
-        stock: 3,
-        estado: "bajo_stock",
-        descripcion: "Con estuche MagSafe, cancelación de ruido",
-    },
-    {
-        id: "P009",
-        nombre: "Protector Pantalla iPhone 15",
-        categoria: "accesorio",
-        marca: "Spigen",
-        modelo: "GlasTR EZ Fit",
-        precio_compra: 5,
-        precio_venta: 14.99,
-        stock: 50,
-        estado: "disponible",
-        descripcion: "Vidrio templado 9H con guía de instalación",
-    },
-    {
-        id: "P010",
-        nombre: "Cable Lightning 2m",
-        categoria: "accesorio",
-        marca: "Apple",
-        modelo: "Cable Original Lightning",
-        precio_compra: 8,
-        precio_venta: 19.99,
-        stock: 0,
-        estado: "agotado",
-        descripcion: "Cable Lightning a USB-C original 2 metros",
-    },
-]
 
 
 // --- Ventas ---
@@ -436,3 +295,140 @@ export const STATUS_CONFIG = {
   active: { label: "Activo", color: "#10B981", bg: "bg-emerald-100 text-emerald-700" },
   blocked: { label: "Bloqueado", color: "#FF5252", bg: "bg-red-100 text-red-700" },
 };
+
+
+
+// --- Categorías ---
+export interface CategoryEntity {
+  id: string
+  name: string
+  description: string
+}
+
+export const CATEGORIES: CategoryEntity[] = [
+  { id: "CAT001", name: "Celulares", description: "Teléfonos móviles y smartphones" },
+  { id: "CAT002", name: "Accesorios", description: "Accesorios para dispositivos móviles" },
+  { id: "CAT003", name: "Audio", description: "Audífonos, parlantes y dispositivos de audio" },
+  { id: "CAT004", name: "Cargadores", description: "Cargadores y cables de alimentación" },
+  { id: "CAT005", name: "Protección", description: "Fundas, protectores de pantalla y estuches" },
+]
+
+// --- Marcas ---
+export interface BrandEntity {
+  id: string
+  name: string
+  description: string
+}
+
+export const BRANDS: BrandEntity[] = [
+  { id: "BR001", name: "Samsung", description: "Electrónica y dispositivos móviles coreanos" },
+  { id: "BR002", name: "Apple", description: "Dispositivos y ecosistema iOS" },
+  { id: "BR003", name: "Xiaomi", description: "Tecnología accesible de alta calidad" },
+  { id: "BR004", name: "Motorola", description: "Smartphones y dispositivos Lenovo/Motorola" },
+  { id: "BR005", name: "Anker", description: "Accesorios de carga y audio" },
+  { id: "BR006", name: "Spigen", description: "Fundas y protectores premium" },
+]
+
+// --- Productos (entidad unificada) ---
+export interface ProductEntity {
+  id: string
+  name: string
+  description: string
+  price: number
+  quantity: number
+  category: CategoryEntity
+  brand: BrandEntity
+}
+
+export const PRODUCTS: ProductEntity[] = [
+  {
+    id: "P001",
+    name: "Samsung Galaxy S24 Ultra",
+    description: "256GB, Titanium Black, 5G",
+    price: 1199.99,
+    quantity: 8,
+    category: CATEGORIES[0],
+    brand: BRANDS[0],
+  },
+  {
+    id: "P002",
+    name: "iPhone 15 Pro Max",
+    description: "256GB, Natural Titanium, 5G",
+    price: 1299.99,
+    quantity: 5,
+    category: CATEGORIES[0],
+    brand: BRANDS[1],
+  },
+  {
+    id: "P003",
+    name: "Xiaomi Redmi Note 13 Pro",
+    description: "128GB, Midnight Black, 4G",
+    price: 299.99,
+    quantity: 15,
+    category: CATEGORIES[0],
+    brand: BRANDS[2],
+  },
+  {
+    id: "P004",
+    name: "Samsung Galaxy A15",
+    description: "128GB, Blue Black, 4G",
+    price: 189.99,
+    quantity: 2,
+    category: CATEGORIES[0],
+    brand: BRANDS[0],
+  },
+  {
+    id: "P005",
+    name: "Motorola Edge 40 Neo",
+    description: "256GB, Black Beauty, 5G",
+    price: 349.99,
+    quantity: 0,
+    category: CATEGORIES[0],
+    brand: BRANDS[3],
+  },
+  {
+    id: "P006",
+    name: "Funda Samsung S24 Ultra",
+    description: "Funda de silicona original color negro",
+    price: 29.99,
+    quantity: 30,
+    category: CATEGORIES[4],
+    brand: BRANDS[0],
+  },
+  {
+    id: "P007",
+    name: "Cargador Rápido USB-C 65W",
+    description: "Cargador rápido GaN con USB-C",
+    price: 39.99,
+    quantity: 25,
+    category: CATEGORIES[3],
+    brand: BRANDS[4],
+  },
+  {
+    id: "P008",
+    name: "AirPods Pro 2da Gen",
+    description: "Con estuche MagSafe, cancelación de ruido",
+    price: 249.99,
+    quantity: 3,
+    category: CATEGORIES[2],
+    brand: BRANDS[1],
+  },
+  {
+    id: "P009",
+    name: "Protector Pantalla iPhone 15",
+    description: "Vidrio templado 9H con guía de instalación",
+    price: 14.99,
+    quantity: 50,
+    category: CATEGORIES[4],
+    brand: BRANDS[5],
+  },
+  {
+    id: "P010",
+    name: "Cable Lightning 2m",
+    description: "Cable Lightning a USB-C original 2 metros",
+    price: 19.99,
+    quantity: 0,
+    category: CATEGORIES[3],
+    brand: BRANDS[1],
+  },
+]
