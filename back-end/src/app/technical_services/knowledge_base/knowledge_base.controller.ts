@@ -8,7 +8,8 @@ export class KnowledgeBaseController {
   constructor(private readonly knowledgeBaseService: KnowledgeBaseService) {}
 
   @Post()
-  create(@Body() createKnowledgeBaseDto: CreateKnowledgeBaseDto) {
+  async create(@Body() createKnowledgeBaseDto: CreateKnowledgeBaseDto) {
+
     return this.knowledgeBaseService.create(createKnowledgeBaseDto);
   }
 

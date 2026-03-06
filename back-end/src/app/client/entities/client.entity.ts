@@ -1,5 +1,5 @@
 import { ServiceOrderEntity } from "src/app/technical_services/service_orders/entities/service_order.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('client')
 export class ClientEntity {
@@ -23,5 +23,14 @@ export class ClientEntity {
 
     @OneToMany(() => ServiceOrderEntity, (serviceOrder) => serviceOrder.client)
     serviceOrders: ServiceOrderEntity[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 
 }

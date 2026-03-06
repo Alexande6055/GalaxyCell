@@ -1,16 +1,13 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { EquipmentTypeEntity } from "../../equipment_types/entities/equipment_type.entity";
 import { KnowledgeBaseEntity } from "../../knowledge_base/entities/knowledge_base.entity";
+import { ServiceOrderEntity } from "../../service_orders/entities/service_order.entity";
 
-export enum IncomeType {
-    GARANTIA = 'garantia',
-    EXTERNO = 'externo'
-}
-
-export enum Status {
+export enum StateType {
     PENDING = 'Pendiente',
-    IN_PROGRESS = 'En progreso',
+    IN_PROGRESS = 'En proceso',
     COMPLETED = 'Completado',
+    CANCELLED = 'Cancelado',
 }
 
 @Entity('service_detail')
@@ -22,48 +19,65 @@ export class ServiceDetailEntity {
     serial_number: string;
 
     @Column({ type: 'text', nullable: true })
-    brand: string;
+    brand: string | null;
 
     @Column({ type: 'text', nullable: true })
-    model: string;
+    model: string | null;
 
-    @Column()
-    exit_date: Date;
+    @Column({
+        type: "date",
+        nullable: true,
+        default: null
+    })
+    exit_date: Date | null;
 
-    @Column()
-    observations: string;
+    @Column({
+        type: 'text',
+        nullable: true,
+        default: null
+    })
+    observations: string | null;
 
-    @Column()
+    @Column({ type: 'text' })
     reported_failure: string;
 
-    @Column()
-    technical_diagnosis: string;
+    @Column({
+        type: 'text',
+        nullable: true,
+        default: null
+    })
+    technical_diagnosis: string | null;
 
     @Column({
         type: 'enum',
-        enum: Status,
-        default: Status.PENDING,
+        enum: StateType,
+        default: StateType.PENDING,
         nullable: true
     })
-    status: string;
+    status: StateType;
 
-    @Column({
-        type: 'enum',
-        enum: IncomeType,
-        default: IncomeType.EXTERNO,
-        nullable: true
-    })
-    income_type: IncomeType;
+    @ManyToOne(() => ServiceOrderEntity, (serviceOrder) => serviceOrder.serviceDetails)
+    @JoinColumn({ name: 'service_order_id' })
+    serviceOrder: ServiceOrderEntity;
 
     @ManyToOne(() => EquipmentTypeEntity, (equipmentType) => equipmentType.serviceDetails)
     @JoinColumn({ name: 'equipment_type_id' })
     equipment_type: EquipmentTypeEntity;
 
-    @ManyToMany(() => KnowledgeBaseEntity, (knowledgeBase) => knowledgeBase.serviceDetails)
+    @ManyToMany(() => KnowledgeBaseEntity, (knowledgeBase) => knowledgeBase.serviceDetails, { nullable: true, })
     @JoinTable({
-        name: 'service_detail_knowledge_base', // Nombre de la tabla intermedia
+        name: 'service_detail_knowledge_base',
         joinColumn: { name: 'service_detail_id', referencedColumnName: 'id' },
         inverseJoinColumn: { name: 'knowledge_base_id', referencedColumnName: 'id' }
     })
-    knowledge_base: KnowledgeBaseEntity[];
+    knowledge_base?: KnowledgeBaseEntity[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 }

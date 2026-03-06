@@ -19,7 +19,12 @@ export class ServiceOrdersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.serviceOrdersService.findOne(+id);
+    return this.serviceOrdersService.findOne(id);
+  }
+
+  @Get('search/:search')
+  search(@Param('search') search: string) {
+    return this.serviceOrdersService.search(search);
   }
 
   @Patch(':id')
@@ -27,8 +32,4 @@ export class ServiceOrdersController {
     return this.serviceOrdersService.update(+id, updateServiceOrderDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.serviceOrdersService.remove(+id);
-  }
 }
