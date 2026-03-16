@@ -91,6 +91,24 @@ export class FirebaseService {
             throw new InternalServerErrorException('Error actualizando la contraseña');
         }
     }
+    /** Function for disabling a user */
+    async disableUser(uid: string) {
+        try {
+            const userRecord = await admin.auth().updateUser(uid, {
+                disabled: true,
+            });
+
+            return {
+                message: 'Usuario deshabilitado correctamente'
+            };
+
+        } catch (error: any) {
+
+            catchErrorFirebase(error)
+
+            throw new InternalServerErrorException('Error deshabilitando el usuario');
+        }
+    }
 
 }
 

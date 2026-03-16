@@ -21,12 +21,12 @@ export class AuthService {
     if (!user) throw new NotFoundException("User not found")
     return user;
   }
-  async createUserTech(userCreateDTO: UserCreateDTO) {
+  async createUserTech(userCreateDTO: UserCreateDTO, rol: RolUsuario = RolUsuario.TECNICO) {
     const user = await this.firebaseService.createUserWithEmail(userCreateDTO.email, userCreateDTO.password, userCreateDTO.nombre)
     const userPreparatedForSaveInDataBase = this.authRepository.create({
       email: userCreateDTO.email,
       nombre: userCreateDTO.nombre,
-      rol: RolUsuario.TECNICO,
+      rol: rol,
       uidFirebase: user.uid
     })
     return await this.authRepository.save(userPreparatedForSaveInDataBase)
@@ -49,4 +49,16 @@ export class AuthService {
     })
 
   }
+
+  async disableUserTech(uidFirebase: string) {
+    const user = await this.firebaseService.disableUser(uidFirebase);
+    return user;
+  }
+
+  async findUserTechByUidFirebase(uidFirebase: string) {
+    const user = await this.authRepository.findOneBy({ uidFirebase, rol: RolUsuario.TECNICO });
+    if (!user) throw new NotFoundException("User not found")
+    return user;
+  }
+  
 }
