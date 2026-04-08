@@ -6,6 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryModule } from './app/category/category.module';
 import { ProductModule } from './app/products/product.module';
 import { BrandModule } from './app/brand/brand.module';
+import { APP_GUARD } from '@nestjs/core';
+import { FirebaseGuard } from './guard/firebase.guard';
+import { RolesGuard } from './guard/roles.guard';
+import { FirebaseModule } from './firebase/firebase.module';
+import { AuthModule } from 'src/app/auth/auth/auth.module';
 import { ImagesModule } from './images/images.module';
 import { EquipmentTypesModule } from './app/technical_services/equipment_types/equipment_types.module';
 import { ClientModule } from './app/client/client.module';
@@ -33,10 +38,20 @@ import { KnowledgeBaseModule } from './app/technical_services/knowledge_base/kno
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      logging: true
     }),
+    FirebaseModule,AuthModule,
     CategoryModule, ProductModule, BrandModule,ImagesModule,
     EquipmentTypesModule, ClientModule, ServiceOrdersModule,
     ServiceDetailsModule,KnowledgeBaseModule
   ],
+  providers: [{
+    provide: APP_GUARD,
+    useClass: FirebaseGuard
+  }, {
+    provide: APP_GUARD,
+    useClass: RolesGuard
+  }],
+    
 })
 export class AppModule { }
