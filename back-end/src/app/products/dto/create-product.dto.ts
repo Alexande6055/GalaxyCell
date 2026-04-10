@@ -22,7 +22,7 @@ export class ProductDto {
     @IsNumber()
     @IsNotEmpty()
     quantity: number;
-
+    
     @IsString()
     @IsNotEmpty({message: 'La categoría es requerida'})
     category: string;
