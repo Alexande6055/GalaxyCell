@@ -9,74 +9,78 @@ interface UserTableProps {
 
 export default function UserTable({ users, onEditClick, onToggleStatus }: UserTableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white/90 backdrop-blur-md shadow-lg border border-white/50" style={{ background: "rgba(255, 255, 255, 0.9)", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)" }}>
-      <table className="w-full text-sm" style={{ fontFamily: "Inter, sans-serif" }}>
-        <thead className="border-b border-[#E2E8F0] bg-linear-to-r from-[#F8F9FA] to-white">
+    <div className="relative overflow-x-auto rounded-2xl bg-white shadow-lg border border-slate-100">
+      <table className="w-full text-sm text-left">
+        <thead className="bg-slate-50 border-b border-slate-100 text-[#1A237E] font-bold">
           <tr>
-            <th className="px-6 py-4 text-left font-semibold text-[#1A237E]">Nombre</th>
-            <th className="px-6 py-4 text-left font-semibold text-[#1A237E]">Rol</th>
-            <th className="px-6 py-4 text-left font-semibold text-[#1A237E]">Email</th>
-            <th className="px-6 py-4 text-left font-semibold text-[#1A237E]">Estado</th>
-            <th className="px-6 py-4 text-right font-semibold text-[#1A237E]">Acciones</th>
+            <th className="px-6 py-4">Nombre</th>
+            <th className="px-6 py-4">Rol</th>
+            <th className="px-6 py-4">Email</th>
+            <th className="px-6 py-4 text-center">Estado</th>
+            <th className="px-6 py-4 text-right">Acciones</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-slate-100">
           {users.length === 0 ? (
             <tr>
               <td colSpan={5} className="py-16 text-center">
-                <UserCog className="mx-auto mb-4 size-12 text-[#CBD5E1]" />
-                <p className="text-[#94a3b8] font-medium">No se encontraron usuarios</p>
+                <UserCog className="mx-auto mb-4 size-12 text-slate-300" />
+                <p className="text-slate-400 font-medium">No se encontraron usuarios registrados</p>
               </td>
             </tr>
           ) : (
-            users.map((u, index) => (
-              <tr
-                key={u.uidFirebase}
-                className="border-t border-[#E2E8F0] hover:bg-[#F8F9FA] transition duration-200"
-                style={{ backgroundColor: index % 2 === 0 ? "rgba(248, 249, 250, 0.5)" : "white" }}
+            users.map((u) => (
+              <tr 
+                key={u.uidFirebase} 
+                className="transition-colors hover:bg-indigo-50/30"
               >
-                <td className="px-6 py-4 font-bold text-[#0f172a]">{u.nombre}</td>
+                <td className="px-6 py-4 font-bold text-slate-700">
+                  {u.nombre}
+                </td>
                 <td className="px-6 py-4">
-                  <span
-                    className="rounded-full px-3 py-1.5 text-xs font-semibold"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 229, 255, 0.1) 100%)",
-                      color: "#007BFF",
-                      border: "1px solid rgba(0, 123, 255, 0.3)"
-                    }}
-                  >
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 uppercase tracking-wider">
                     {u.rol}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-[#64748b]">{u.email}</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-slate-500 italic">
+                  {u.email}
+                </td>
+                <td className="px-6 py-4 text-center">
                   <span
-                    className={`rounded-full px-3 py-1.5 text-xs font-semibold ${u.isActive
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-[#FF5252]/10 text-[#FF5252]"
-                      }`}
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
+                      u.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
                   >
                     {u.isActive ? "Activo" : "Bloqueado"}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-1">
+                    {/* BOTÓN EDITAR */}
                     <button
                       onClick={() => onEditClick(u)}
-                      className="rounded-xl p-2.5 hover:bg-[#E2E8F0] transition duration-200"
-                      title="Editar usuario"
+                      title="Editar Usuario"
+                      className="p-2 rounded-lg transition-all text-indigo-600 hover:bg-indigo-50 active:scale-95"
                     >
-                      <Edit className="size-5 text-[#007BFF]" />
+                      <Edit className="size-4" />
                     </button>
+
+                    {/* BOTÓN TOGGLE ESTADO */}
                     <button
                       onClick={() => onToggleStatus(u.uidFirebase)}
-                      className="rounded-xl p-2.5 hover:bg-[#E2E8F0] transition duration-200"
-                      title={u.isActive ? "Bloquear usuario" : "Activar usuario"}
+                      title={u.isActive ? "Bloquear Usuario" : "Activar Usuario"}
+                      className={`p-2 rounded-lg transition-all active:scale-95 ${
+                        u.isActive 
+                          ? "text-red-500 hover:bg-red-50" 
+                          : "text-emerald-600 hover:bg-emerald-50"
+                      }`}
                     >
                       {u.isActive ? (
-                        <ShieldOff className="size-5 text-[#FF5252]" />
+                        <ShieldOff className="size-4" />
                       ) : (
-                        <ShieldCheck className="size-5 text-emerald-600" />
+                        <ShieldCheck className="size-4" />
                       )}
                     </button>
                   </div>

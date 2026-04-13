@@ -5,31 +5,34 @@ import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-
 async function bootstrap() {
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  // 1. Pipes Globales (Solo uno es necesario)
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      // Esto ayuda a que los IDs en los params se conviertan a número/string automáticamente
+      transformOptions: { enableImplicitConversion: true }, 
+    }),
+  );
 
+  // 2. CORS (Configurado para desarrollo)
   app.enableCors({
-    origin: true
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
   });
 
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  // 3. Servir Archivos Estáticos (Ruta robusta usando el Directorio de Trabajo)
+  // process.cwd() apunta a la raíz de tu proyecto 'back-end'
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
     prefix: '/uploads/',
   });
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    
-  }));
 
+  // 4. Configuración de Swagger
   const config = new DocumentBuilder()
     .setTitle('Galaxi Cell')
     .setDescription('Test endpoints for api')
@@ -42,13 +45,17 @@ async function bootstrap() {
         description: 'Enter your Firebase token',
         in: 'header',
       },
-      'firebase-auth'
+      'firebase-auth' // Este es el ID que usarás en @ApiBearerAuth()
     )
-    .build()
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+    .build();
 
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  // 5. Puerto
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  
+  console.log(`🚀 Application is running on: http://localhost:${port}/api`);
 }
 bootstrap();

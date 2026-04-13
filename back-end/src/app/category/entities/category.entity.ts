@@ -11,6 +11,9 @@ export class CategoryEntity {
 
     @Column()
     description: string;
+    
+     @Column({ type: 'boolean', default: true }) // <--- NUEVA COLUMNA
+    isActive: boolean;
 
     @OneToMany(() => ProductEntity, (product) => product.category)
     products: ProductEntity[];

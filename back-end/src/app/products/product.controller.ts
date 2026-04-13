@@ -1,25 +1,46 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+  ParseUUIDPipe,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductDto } from './dto/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path/win32';
+import { extname } from 'path';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {
-  }
+  constructor(private readonly productService: ProductService) {}
+
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads/tmp', // carpeta temporal
+        destination: './uploads/tmp',
         filename: (req, file, cb) => {
-          cb(null, Date.now() + '-' + Math.round(Math.random() * 1e9) + extname(file.originalname));
+          cb(
+            null,
+            Date.now() +
+              '-' +
+              Math.round(Math.random() * 1e9) +
+              extname(file.originalname),
+          );
         },
       }),
       fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) return cb(new Error('Solo imágenes'), false);
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return cb(new Error('Solo imágenes'), false);
+        }
         cb(null, true);
       },
     }),
@@ -29,49 +50,129 @@ export class ProductController {
   }
 
   @Get()
-  async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 15) {
-    return this.productService.findAll(page, limit);
+  findAll(
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('isActive') isActive?: string,
+    @Query('search') search?: string,
+    @Query('category') category?: string,
+    @Query('brand') brand?: string,
+  ) {
+    const activeFilter =
+      isActive === 'true' ? true : isActive === 'false' ? false : undefined;
+
+    return this.productService.findAll(
+      page ?? 1,
+      limit ?? 15,
+      activeFilter,
+      search,
+      category,
+      brand,
+    );
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() productDto: ProductDto) {
-    return this.productService.update(id, productDto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/tmp',
+        filename: (req, file, cb) => {
+          cb(
+            null,
+            Date.now() +
+              '-' +
+              Math.round(Math.random() * 1e9) +
+              extname(file.originalname),
+          );
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return cb(new Error('Solo imágenes'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() productDto: ProductDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.productService.update(id, productDto, file);
+  }
+
+  @Patch(':id/toggle')
+  toggleStatus(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.productService.toggleStatus(id);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.softDelete(id);
   }
 
   @Get('name/:name')
-  async findByName(
+  findByName(
     @Param('name') name: string,
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '15') {
-    return this.productService.findByName(name, Number(page), Number(limit));
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('isActive') isActive?: string,
+  ) {
+    const activeFilter =
+      isActive === 'true' ? true : isActive === 'false' ? false : undefined;
+
+    return this.productService.findByName(
+      name,
+      page ?? 1,
+      limit ?? 15,
+      activeFilter,
+    );
   }
 
   @Get('category/:category')
-  async findByCategory(
-    @Param('category') category: string,
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '15') {
-    return this.productService.findByCategory(category, Number(page), Number(limit));
+  findByCategory(
+    @Param('category', new ParseUUIDPipe()) category: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('isActive') isActive?: string,
+  ) {
+    const activeFilter =
+      isActive === 'true' ? true : isActive === 'false' ? false : undefined;
+
+    return this.productService.findByCategory(
+      category,
+      page ?? 1,
+      limit ?? 15,
+      activeFilter,
+    );
   }
 
   @Get('brand/:brand')
-  async findByBrand(
-    @Param('brand') brand: string,
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '15',
+  findByBrand(
+    @Param('brand', new ParseUUIDPipe()) brand: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+    @Query('isActive') isActive?: string,
   ) {
-    return this.productService.findByBrand(brand, Number(page), Number(limit),);
+    const activeFilter =
+      isActive === 'true' ? true : isActive === 'false' ? false : undefined;
+
+    return this.productService.findByBrand(
+      brand,
+      page ?? 1,
+      limit ?? 15,
+      activeFilter,
+    );
   }
+
+  @Get('detail/:id')
+getDetail(@Param('id') id: string) {
+  return this.productService.detail(id);
+}
 }

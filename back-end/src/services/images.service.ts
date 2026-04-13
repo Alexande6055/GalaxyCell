@@ -1,31 +1,74 @@
-// images.service.ts
-import { Injectable } from '@nestjs/common';
-import { join } from 'path';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { promises as fs } from 'fs';
-import { randomUUID } from 'crypto';
+import * as path from 'path';
 import * as sharp from 'sharp';
 
 @Injectable()
 export class ImagesService {
+  async saveProductImage(productId: string, file: Express.Multer.File) {
+    try {
+      const uploadsRoot = path.join(process.cwd(), 'uploads');
+      const productDir = path.join(uploadsRoot, 'products', productId);
 
-    async saveProductImage(productId: string, file: Express.Multer.File) {
-        const folder = join(process.cwd(), 'uploads', 'products', productId);
-        await fs.mkdir(folder, { recursive: true });
+      // Crear carpeta
+      await fs.mkdir(productDir, { recursive: true });
 
-        const fileName = `${randomUUID()}.webp`; // ahora SIEMPRE webp
-        const finalPath = join(folder, fileName);
+      const fileName = `${productId}.webp`;
+      const outputPath = path.join(productDir, fileName);
 
-        await sharp(file.path)
-            .resize(1200) // ancho máximo 1200px (mantiene proporción)
-            .webp({ quality: 80 }) // compresión 80% (balance ideal)
-            .toFile(finalPath);
+      // --- CORRECCIÓN CRÍTICA ---
+      // Si file.path no existe, usamos el buffer (Memoria).
+      const input = file.path || file.buffer;
 
-        // eliminar archivo temporal
-        await fs.unlink(file.path);
+      if (!input) {
+        throw new Error('No se recibió un archivo válido (path o buffer ausente)');
+      }
 
-        const relativePath = `products/${productId}/${fileName}`;
-        const url = `/uploads/${relativePath}`;
+      await sharp(input)
+        .resize(1200, 1200, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
 
-        return { fileName, relativePath, url };
+      // Solo intentamos borrar si el archivo existía físicamente en el disco
+      if (file.path) {
+        try {
+          await fs.unlink(file.path);
+        } catch (err) {
+          console.warn(`No se pudo eliminar el temporal en: ${file.path}`);
+        }
+      }
+
+      // Normalizar ruta para la base de datos
+      const relativePath = path
+        .join('uploads', 'products', productId, fileName)
+        .replace(/\\/g, '/');
+
+      return {
+        relativePath,
+        url: `/${relativePath}`,
+      };
+    } catch (error) {
+      console.error('Error en ImagesService:', error); // Log para debuggear en la terminal
+      throw new InternalServerErrorException(
+        'No se pudo procesar la imagen del producto',
+      );
     }
+  }
+
+  async deleteProductImageByPath(relativePath?: string | null) {
+    if (!relativePath) return;
+
+    // Limpiamos el slash inicial si existe para evitar rutas absolutas erróneas
+    const cleanPath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+    const absolutePath = path.join(process.cwd(), cleanPath);
+
+    try {
+      await fs.unlink(absolutePath);
+    } catch (error) {
+      // Si no existe el archivo, no hacemos nada
+    }
+  }
 }

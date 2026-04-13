@@ -45,10 +45,12 @@ import { KnowledgeBaseModule } from './app/technical_services/knowledge_base/kno
     EquipmentTypesModule, ClientModule, ServiceOrdersModule,
     ServiceDetailsModule,KnowledgeBaseModule
   ],
-  providers: [{
+   providers: [
+    {
     provide: APP_GUARD,
     useClass: FirebaseGuard
-  }, {
+  },
+   {
     provide: APP_GUARD,
     useClass: RolesGuard
   }],

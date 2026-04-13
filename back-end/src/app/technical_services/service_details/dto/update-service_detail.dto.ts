@@ -1,17 +1,18 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateServiceDetailDto } from './create-service_detail.dto';
-import { ArrayUnique, IsArray, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { ArrayUnique, IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateServiceDetailDto extends PartialType(CreateServiceDetailDto) {
-    @IsString()
-    @IsNotEmpty()
-    technical_diagnosis: string;
+@IsOptional()
+  @IsEnum(['En proceso', 'Completado', 'Cancelado'])
+  status?: string;
 
-    
-    @IsOptional()
-    @IsArray()
-    @ArrayUnique()
-    @IsUUID('4', { each: true })
-    knowledge_base_ids?: string[];
+  @IsOptional()
+  @IsString()
+  technical_diagnosis?: string;
+
+  @IsOptional()
+  @IsArray()
+  knowledge_base_ids?: string[];
 
 }

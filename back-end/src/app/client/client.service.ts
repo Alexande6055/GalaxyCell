@@ -1,49 +1,107 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { 
+  ConflictException, 
+  Injectable, 
+  InternalServerErrorException, 
+  NotFoundException 
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ClientEntity } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ClientEntity } from './entities/client.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class ClientService {
   constructor(
     @InjectRepository(ClientEntity)
     private readonly clientRepository: Repository<ClientEntity>,
-
-  ) { }
-
+  ) {}
 
   async create(createClientDto: CreateClientDto) {
+    // Validamos si ya existe el documento o el correo
+    const existingClient = await this.clientRepository.findOne({
+      where: [
+        { document_number: createClientDto.document_number },
+        { email: createClientDto.email }
+      ],
+    });
+
+    if (existingClient) {
+      const field = existingClient.document_number === createClientDto.document_number 
+        ? 'documento' 
+        : 'correo electrónico';
+      throw new ConflictException(`Ya existe un cliente registrado con este ${field}`);
+    }
 
     try {
-
-      const existingClient = await this.clientRepository.findOne({
-        where: { document_number: createClientDto.document_number },
-      });
-      if (existingClient) {
-        throw new Error('Ya existe un cliente con ese documento');
-      }
-      return await this.clientRepository.save(createClientDto);
-
+      const client = this.clientRepository.create(createClientDto);
+      return await this.clientRepository.save(client);
     } catch (error) {
-      throw new Error('Error al crear el cliente verifique que los datos ingresados');
+      throw new InternalServerErrorException('Error al crear el cliente, verifique los datos ingresados');
     }
   }
 
-  findAll() {
-    return `This action returns all client`;
+  async findAll(page: number = 1, limit: number = 10) {
+    try {
+      const [data, total] = await this.clientRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+        order: { createdAt: 'DESC' },
+      });
+
+      return {
+        data,
+        meta: {
+          total,
+          page,
+          lastPage: Math.ceil(total / limit),
+        }
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Error al obtener la lista de clientes con paginación');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    const client = await this.clientRepository.findOne({
+      where: { id },
+      relations: ['serviceOrders'] 
+    });
+
+    if (!client) {
+      throw new NotFoundException(`El cliente con ID ${id} no existe`);
+    }
+
+    return client;
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async update(id: string, updateClientDto: UpdateClientDto) {
+    const client = await this.clientRepository.preload({
+      id,
+      ...updateClientDto,
+    });
+
+    if (!client) {
+      throw new NotFoundException(`No se pudo encontrar el cliente con ID ${id} para actualizar`);
+    }
+
+    try {
+      return await this.clientRepository.save(client);
+    } catch (error: any) {
+      // Error 23505: Unique violation en PostgreSQL
+      if (error.code === '23505') {
+        throw new ConflictException('El documento o email ya pertenece a otro cliente registrado');
+      }
+      throw new InternalServerErrorException('Error al actualizar el cliente');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: string) {
+    const client = await this.findOne(id);
+    try {
+      return await this.clientRepository.softRemove(client);
+    } catch (error) {
+      throw new InternalServerErrorException('Error al eliminar el cliente');
+    }
   }
 }

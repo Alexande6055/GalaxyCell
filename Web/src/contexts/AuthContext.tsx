@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               return
             }
             const token = await fbUser.getIdToken()
-            const userBack = await Auth.login(token)
+            const userBack = await Auth.login()
             if (userBack) {
               setUser(userBack)
             } else {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setLoading(false)
           }
         })
-        ; (AuthContext as any)._unsub = unsub
+          ; (AuthContext as any)._unsub = unsub
       })()
     return () => {
       mounted = false
@@ -61,15 +61,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const fbUser = await FirebaseApi.login(email, password)
     if (!fbUser) return null
 
-    // then validate existence in backend using Firebase token
     try {
-      const token = await fbUser.getIdToken()
-      const userBack = await Auth.login(token)
+      const userBack = await Auth.login()
       if (userBack) {
         setUser(userBack)
+        console.log(userBack)
         return userBack
       }
-      // backend user not found: sign out
+
       await FirebaseApi.logout()
       return null
     } catch (e) {

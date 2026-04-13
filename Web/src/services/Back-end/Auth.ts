@@ -3,10 +3,9 @@ import apiClient from "../utils/apiClient";
 
 export const Auth = {
     async login(): Promise<UserBack | undefined> {
-        // El token ya se envía solo gracias al interceptor
-        const { data } = await apiClient.get<UserBack>("/auth");
-        return data;
-    },
+    const { data } = await apiClient.get<UserBack>("/auth");
+    return data;
+  },
 
     async listUserTech(): Promise<UserBack[] | undefined> {
         const { data } = await apiClient.get<UserBack[]>("/auth/list-user-tech");

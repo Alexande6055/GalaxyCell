@@ -9,10 +9,13 @@ export class BrandEntity {
     @Column({ unique: true })
     name: string;
 
-    @Column()
+    @Column({ nullable: true }) // Agregado para que coincida con tu tabla
     description: string;
 
-    @OneToMany(() => ProductEntity, (product) => product.category)
+    @Column({ type: 'boolean', default: true }) // <--- NUEVA COLUMNA
+    isActive: boolean;
+
+    @OneToMany(() => ProductEntity, (product) => product.brand)
     products: ProductEntity[];
 
     @CreateDateColumn()
@@ -23,7 +26,4 @@ export class BrandEntity {
 
     @DeleteDateColumn()
     deletedAt: Date;
-
-
-
 }

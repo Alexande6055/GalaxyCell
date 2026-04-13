@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ServiceOrdersService } from './service_orders.service';
 import { CreateServiceOrderDto } from './dto/create-service_order.dto';
 import { UpdateServiceOrderDto } from './dto/update-service_order.dto';
@@ -13,8 +22,16 @@ export class ServiceOrdersController {
   }
 
   @Get()
-  findAll() {
-    return this.serviceOrdersService.findAll();
+  findAll(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('search') search?: string,
+  ) {
+    if (search) {
+      return this.serviceOrdersService.search(search, page, limit);
+    }
+
+    return this.serviceOrdersService.findAll(page, limit);
   }
 
   @Get(':id')
@@ -22,14 +39,18 @@ export class ServiceOrdersController {
     return this.serviceOrdersService.findOne(id);
   }
 
-  @Get('search/:search')
-  search(@Param('search') search: string) {
-    return this.serviceOrdersService.search(search);
+ @Patch(':id')
+update(@Param('id') id: string) {
+  return this.serviceOrdersService.update(id);
+}
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.serviceOrdersService.remove(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceOrderDto: UpdateServiceOrderDto) {
-    return this.serviceOrdersService.update(+id, updateServiceOrderDto);
-  }
-
+  @Get('detail/:id')
+getOrderDetail(@Param('id') id: string) {
+  return this.serviceOrdersService.detail(id);
+}
 }

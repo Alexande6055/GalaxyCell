@@ -17,18 +17,4 @@ export class EquipmentTypesController {
     return this.equipmentTypesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.equipmentTypesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEquipmentTypeDto: UpdateEquipmentTypeDto) {
-    return this.equipmentTypesService.update(+id, updateEquipmentTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.equipmentTypesService.remove(+id);
-  }
 }

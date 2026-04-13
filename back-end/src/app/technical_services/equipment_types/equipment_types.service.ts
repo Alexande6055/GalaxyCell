@@ -32,15 +32,4 @@ export class EquipmentTypesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} equipmentType`;
-  }
-
-  update(id: number, updateEquipmentTypeDto: UpdateEquipmentTypeDto) {
-    return `This action updates a #${id} equipmentType`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} equipmentType`;
-  }
 }

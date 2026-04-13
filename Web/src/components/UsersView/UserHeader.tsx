@@ -19,11 +19,8 @@ export default function UserHeader({ userCount, onNewUserClick }: UserHeaderProp
 
       <button
         onClick={onNewUserClick}
-        className="flex items-center gap-2 rounded-2xl px-6 py-3 text-white shadow-lg transition duration-300 hover:shadow-2xl hover:scale-105 active:scale-95"
-        style={{
-          background: "linear-gradient(135deg, #007BFF 0%, #00E5FF 100%)",
-          boxShadow: "0 4px 20px rgba(0, 123, 255, 0.3)"
-        }}>
+                 className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-md shadow-blue-100 transition-all active:scale-95 hover:bg-blue-700">
+
         <Plus className="size-5" />
         <span className="font-semibold" style={{ fontFamily: "Inter, sans-serif" }}>Nuevo Usuario</span>
       </button>

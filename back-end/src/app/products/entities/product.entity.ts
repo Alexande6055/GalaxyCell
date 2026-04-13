@@ -16,11 +16,17 @@ export class ProductEntity {
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     price: number;
 
+    @Column({ type: 'boolean', default: true }) // <--- NUEVA COLUMNA
+    isActive: boolean;
+
     @Column()
     quantity: number;
 
-    @Column()
-    coverImagePath: string;
+        @Column({ 
+    type: 'text',      // Especificamos 'text' para Postgres
+    nullable: true     // Permitimos nulos
+    })
+    coverImagePath: string | null;
 
     @ManyToOne(() => CategoryEntity, (category) => category.products)
     @JoinColumn({ name: 'category_id' })
