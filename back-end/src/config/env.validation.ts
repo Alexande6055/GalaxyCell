@@ -1,5 +1,10 @@
 import * as Joi from 'joi';
 
+/**
+ * Esquema de validación para las variables de entorno de la aplicación.
+ * Utiliza Joi para asegurar que todas las configuraciones críticas del sistema
+ * (entorno, puerto, credenciales de base de datos, seguridad) estén cargadas correctamente.
+ */
 export const envValidationSchema = Joi.object({
     NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
     PORT: Joi.number().required(),

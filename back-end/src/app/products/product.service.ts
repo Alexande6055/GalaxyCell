@@ -4,6 +4,10 @@ import { ProductEntity } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { ProductDto } from './dto/create-product.dto';
 
+/**
+ * Servicio encargado de gestionar la lógica de negocio relativa a los productos.
+ * Utiliza TypeORM para comunicarse con la base de datos para la entidad ProductEntity.
+ */
 @Injectable()
 export class ProductService {
     constructor(
@@ -11,6 +15,14 @@ export class ProductService {
         private readonly productRepository: Repository<ProductEntity>
     ) { }
 
+    /**
+     * Registra un nuevo producto en la base de datos.
+     * Mapea los campos de categoría y marca del DTO en estructuras que TypeORM pueda guardar relacionalmente.
+     * 
+     * @param productDto - DTO con los datos del nuevo producto.
+     * @returns La entidad del producto guardada.
+     * @throws {Error} Si el producto con el mismo nombre ya existe, o si ocurre un fallo al guardar.
+     */
     async create(productDto: ProductDto) {
         try {
             const exitingProduct = await this.productRepository.findOne({
@@ -36,14 +48,33 @@ export class ProductService {
         }
     }
 
+    /**
+     * Obtiene el listado de todos los productos registrados.
+     * 
+     * @returns Arreglo de entidades de producto.
+     */
     async findAll() {
         return await this.productRepository.find();
     }
 
+    /**
+     * Obtiene la información de un producto por su ID.
+     * 
+     * @param id - Identificador único UUID del producto.
+     * @returns El producto encontrado o null.
+     */
     async findOne(id: string) {
         return await this.productRepository.findOne({ where: { id: id } });
     }
 
+    /**
+     * Actualiza la información de un producto existente.
+     * 
+     * @param id - Identificador único UUID del producto.
+     * @param productDto - DTO con la información a actualizar.
+     * @returns La entidad del producto actualizada y guardada.
+     * @throws {Error} Si el producto no existe o si ocurre un error de llave duplicada.
+     */
     async update(id: string, productDto: ProductDto) {
         const product = await this.productRepository.preload({
             id: id,
@@ -69,6 +100,13 @@ export class ProductService {
         }
     }
 
+    /**
+     * Aplica un borrado lógico (soft delete) a un producto por su ID.
+     * 
+     * @param id - Identificador único UUID del producto.
+     * @returns La entidad del producto modificada tras el borrado lógico.
+     * @throws {Error} Si el producto no existe.
+     */
     async softDelete(id: string) {
         const product = await this.productRepository.findOne({ where: { id: id } });
         if (!product) {

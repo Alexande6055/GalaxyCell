@@ -11,6 +11,14 @@ import { RolesGuard } from './guard/roles.guard';
 import { FirebaseModule } from './firebase/firebase.module';
 import { AuthModule } from 'src/app/auth/auth/auth.module';
 
+/**
+ * Módulo raíz (Root Module) de la aplicación NestJS.
+ * Se encarga de:
+ * 1. Cargar la configuración global de entorno (.env) y validar su esquema.
+ * 2. Establecer la conexión global con la base de datos PostgreSQL mediante TypeORM.
+ * 3. Importar los módulos funcionales del negocio (Categorías, Productos, Marcas, Firebase, Autenticación).
+ * 4. Registrar globalmente los guardias de seguridad `FirebaseGuard` (autenticación) y `RolesGuard` (control de acceso/roles).
+ */
 @Module({
   imports: [
     ConfigModule.forRoot({

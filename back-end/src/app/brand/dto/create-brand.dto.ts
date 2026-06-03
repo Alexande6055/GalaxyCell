@@ -2,19 +2,28 @@ import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
 import { Alphanumeric } from "src/decorators/alphanumeric.decorator";
 import { StrictString } from "src/decorators/stricString.decorator";
 
+/**
+ * Objeto de Transferencia de Datos (DTO) para la creación de una nueva marca.
+ * Contiene validaciones y transformaciones para asegurar que los datos de entrada sean seguros y correctos.
+ */
 export class CreateBrandDto {
+    /**
+     * Nombre de la marca. Debe ser una cadena de texto alfabética estricta de entre 3 y 50 caracteres.
+     */
     @StrictString() // Primero limpia
-        @IsString()      // Asegura que es string post-limpieza
-        @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
-        @MaxLength(50, { message: 'El nombre es muy largo' })
-        @MinLength(3, { message: 'El nombre es muy corto' })
-        name: string;
-        
-        @Alphanumeric()
-        @IsString()
-        @IsNotEmpty({ message: 'La descripción no puede estar vacía' })
-        @MaxLength(500, { message: 'La descripción es muy larga' }) // <--- Límite razonable para descripciones
-        @MinLength(10, { message: 'La descripción es muy corta' })  // <--- Límite razonable para descripciones
-        description: string;
-
+    @IsString()      // Asegura que es string post-limpieza
+    @IsNotEmpty({ message: 'El nombre no puede estar vacío' })
+    @MaxLength(50, { message: 'El nombre es muy largo' })
+    @MinLength(3, { message: 'El nombre es muy corto' })
+    name: string;
+    
+    /**
+     * Descripción general de la marca. Debe ser alfanumérica de entre 10 y 500 caracteres.
+     */
+    @Alphanumeric()
+    @IsString()
+    @IsNotEmpty({ message: 'La descripción no puede estar vacía' })
+    @MaxLength(500, { message: 'La descripción es muy larga' }) // <--- Límite razonable para descripciones
+    @MinLength(10, { message: 'La descripción es muy corta' })  // <--- Límite razonable para descripciones
+    description: string;
 }

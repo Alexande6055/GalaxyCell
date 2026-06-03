@@ -1,5 +1,20 @@
 import { Transform } from 'class-transformer';
 
+/**
+ * Decorador de transformación para sanitizar, validar y normalizar cadenas alfanuméricas de forma estricta.
+ * 
+ * Este decorador realiza las siguientes acciones:
+ * 1. Comprueba la longitud para prevenir ataques de denegación de servicio por expresiones regulares (ReDoS).
+ * 2. Normaliza el texto usando la forma Unicode NFKC para estandarizar caracteres especiales.
+ * 3. Elimina caracteres de control ASCII e invisibles (como espacios de ancho cero).
+ * 4. Valida que la cadena contenga únicamente letras (incluyendo tildes y eñes), números y espacios utilizando una lista blanca.
+ * 5. Colapsa múltiples espacios consecutivos en un solo espacio.
+ * 6. Desinfecta el resultado removiendo cualquier etiqueta HTML, caracteres de escape o bytes nulos.
+ * 
+ * Si el texto contiene caracteres inválidos como símbolos o caracteres especiales no autorizados, la transformación retorna `null`.
+ * 
+ * @returns {PropertyDecorator} Un transformador de class-transformer para aplicar en propiedades de DTOs.
+ */
 export function Alphanumeric() {
   return Transform(({ value }) => {
     // 1. Validación de tipo inicial y longitud de seguridad

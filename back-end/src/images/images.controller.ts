@@ -12,10 +12,24 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ImagesService } from './images.service';
 
+/**
+ * Controlador encargado de manejar la carga (upload) y listado de imágenes de la aplicación.
+ * Las imágenes se guardan de forma local en la carpeta './uploads'.
+ */
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
+  /**
+   * Endpoint para subir una sola imagen.
+   * Utiliza Multer para interceptar el archivo en el parámetro 'image', validando que el mimetype sea de una imagen
+   * válida (jpg, jpeg, png, webp) y asignándole un nombre único basado en timestamp.
+   * RUTA: POST /images
+   * 
+   * @param file - Archivo de imagen subido por el cliente.
+   * @returns Un objeto con el nombre asignado (filename) y la url relativa.
+   * @throws {HttpException} Si no se recibe archivo o si el archivo no es una imagen válida.
+   */
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
@@ -55,6 +69,12 @@ export class ImagesController {
     };
   }
 
+  /**
+   * Endpoint para obtener un listado de todas las imágenes almacenadas localmente.
+   * RUTA: GET /images
+   * 
+   * @returns Listado de todas las imágenes.
+   */
   @Get()
   getAllImages() {
     return this.imagesService.getAllImages();

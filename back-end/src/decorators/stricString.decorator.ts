@@ -1,5 +1,18 @@
 import { Transform } from 'class-transformer';
 
+/**
+ * Decorador de transformación para validar y desinfectar de manera estricta cadenas de texto.
+ * 
+ * Este decorador realiza las siguientes acciones:
+ * 1. Convierte el valor a cadena y lo normaliza usando la forma Unicode NFC.
+ * 2. Elimina caracteres de control ASCII invisibles para prevenir inyecciones.
+ * 3. Valida mediante una expresión regular que el texto contenga únicamente caracteres alfabéticos (incluyendo tildes y eñes) y espacios.
+ * 4. Aplica una capa de desinfección eliminando etiquetas HTML, eventos de JS y caracteres conflictivos de sintaxis de SQL/Shell.
+ * 
+ * Si el texto contiene caracteres inválidos como números o símbolos, la transformación retorna `null`.
+ * 
+ * @returns {PropertyDecorator} Un transformador de class-transformer para aplicar a las propiedades de los DTOs.
+ */
 export function StrictString() {
     return Transform(({ value }) => {
         if (value === null || value === undefined || value === '') return value;
